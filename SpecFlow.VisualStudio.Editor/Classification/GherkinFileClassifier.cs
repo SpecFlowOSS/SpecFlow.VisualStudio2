@@ -32,7 +32,6 @@ namespace SpecFlow.VisualStudio.Editor.Classification
             {
                 var tagSpans = mappingTagSpan.Span.GetSpans(span.Snapshot);
                 AddClassifications(classifications, mappingTagSpan.Tag, tagSpans[0]);
-                //classifications.Add(new ClassificationSpan(tagSpans[0], gherkinFileEditorClassifications.Keyword));
             }
 
             return classifications;
@@ -59,22 +58,34 @@ namespace SpecFlow.VisualStudio.Editor.Classification
                     classifications.Add(new ClassificationSpan(new SnapshotSpan(tagSpan.Start, tagSpan.End), gherkinFileEditorClassifications.Comment));
                     break;
                 case TokenType.TagLine:
+                    AddItemClassifications(classifications, tag, tagSpan, gherkinFileEditorClassifications.Tag);
                     break;
                 case TokenType.TableRow:
-                    foreach (var gherkinLineSpan in tag.Token.MathcedItems)
-                    {
-                        classifications.Add(new ClassificationSpan(new SnapshotSpan(tagSpan.Start.Add(gherkinLineSpan.Column), gherkinLineSpan.Text.Length), gherkinFileEditorClassifications.TableCell));
-                    }
+                    AddItemClassifications(classifications, tag, tagSpan, gherkinFileEditorClassifications.TableCell);
                     break;
                 case TokenType.DocStringSeparator:
                     classifications.Add(new ClassificationSpan(new SnapshotSpan(tagSpan.Start, tagSpan.End), gherkinFileEditorClassifications.MultilineText));
                     break;
+                case TokenType.Other:
+                    var classificationType = 
+                        tag.RuleType == RuleType.DocString ? 
+                        gherkinFileEditorClassifications.MultilineText :
+                        gherkinFileEditorClassifications.Description;
+                    classifications.Add(new ClassificationSpan(new SnapshotSpan(tagSpan.Start, tagSpan.End), classificationType));
+                    break;
                 case TokenType.Empty:
                     break;
-                case TokenType.Other:
-                    //TODO: MultilineText
-                    classifications.Add(new ClassificationSpan(new SnapshotSpan(tagSpan.Start, tagSpan.End), gherkinFileEditorClassifications.Description));
-                    break;
+            }
+        }
+
+        private static void AddItemClassifications(List<ClassificationSpan> classifications, GherkinTokenTag tag, SnapshotSpan tagSpan,
+            IClassificationType classificationType)
+        {
+            foreach (var gherkinLineSpan in tag.Token.MathcedItems)
+            {
+                classifications.Add(
+                    new ClassificationSpan(
+                        new SnapshotSpan(tagSpan.Start.Add(gherkinLineSpan.Column - tag.Token.Location.Column), gherkinLineSpan.Text.Length), classificationType));
             }
         }
 

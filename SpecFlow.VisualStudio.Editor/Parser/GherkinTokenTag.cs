@@ -8,10 +8,12 @@ namespace SpecFlow.VisualStudio.Editor.Parser
     public class GherkinTokenTag : ITag
     {
         public Token Token { get; private set; }
+        public RuleType RuleType { get; private set; }
 
-        public GherkinTokenTag(Token token)
+        public GherkinTokenTag(Token token, RuleType ruleType)
         {
             this.Token = token;
+            RuleType = ruleType;
         }
 
         public SnapshotSpan GetSpan(ITextSnapshot snapshot)
