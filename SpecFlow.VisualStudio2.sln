@@ -5,6 +5,11 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecFlow.VisualStudio.Editor", "SpecFlow.VisualStudio.Editor\SpecFlow.VisualStudio.Editor.csproj", "{6ADE30F4-A56F-4E35-9EEC-C54B029E13DA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{EA9A7A71-1E32-42B5-A6CD-45A440C70F74}"
+	ProjectSection(SolutionItems) = preProject
+		Samples\FullMonty.feature = Samples\FullMonty.feature
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
