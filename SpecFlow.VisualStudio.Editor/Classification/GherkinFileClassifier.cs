@@ -19,8 +19,15 @@ namespace SpecFlow.VisualStudio.Editor.Classification
         {
             this.buffer = buffer;
             this.gherkinTagAggregator = gherkinTagAggregator;
-            
+
             gherkinFileEditorClassifications = new GherkinFileEditorClassifications(classificationTypeRegistryService);
+
+            this.gherkinTagAggregator.BatchedTagsChanged += (sender, args) =>
+            {
+                //TODO: raise event only for the span received in args
+                if (ClassificationChanged != null)
+                    ClassificationChanged(sender, new ClassificationChangedEventArgs(new SnapshotSpan(buffer.CurrentSnapshot, 0, buffer.CurrentSnapshot.Length)));
+            };
         }
 
         public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span)

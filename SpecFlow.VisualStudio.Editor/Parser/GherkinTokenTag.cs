@@ -9,14 +9,16 @@ namespace SpecFlow.VisualStudio.Editor.Parser
     {
         public Token Token { get; private set; }
         public RuleType RuleType { get; private set; }
+        public SnapshotSpan Span { get; private set; }
 
-        public GherkinTokenTag(Token token, RuleType ruleType)
+        public GherkinTokenTag(Token token, RuleType ruleType, ITextSnapshot snapshot)
         {
             this.Token = token;
             RuleType = ruleType;
+            Span = GetSpan(snapshot);
         }
 
-        public SnapshotSpan GetSpan(ITextSnapshot snapshot)
+        private SnapshotSpan GetSpan(ITextSnapshot snapshot)
         {
             var line = snapshot.GetLineFromLineNumber(Token.Location.Line - 1);
             var start = line.Start.Add(Token.Location.Column - 1);
