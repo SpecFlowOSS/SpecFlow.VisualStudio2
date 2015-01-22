@@ -58,7 +58,7 @@ namespace SpecFlow.VisualStudio.Editor.Classification
                     break;
                 case TokenType.StepLine:
                     classifications.Add(new ClassificationSpan(new SnapshotSpan(tagSpan.Start, tag.Token.MatchedKeyword.Length), gherkinFileEditorClassifications.Keyword));
-                    classifications.Add(new ClassificationSpan(new SnapshotSpan(tagSpan.Start.Add(tag.Token.MatchedKeyword.Length), tagSpan.End), gherkinFileEditorClassifications.UnboundStepText));
+                    //classifications.Add(new ClassificationSpan(new SnapshotSpan(tagSpan.Start.Add(tag.Token.MatchedKeyword.Length), tagSpan.End), gherkinFileEditorClassifications.StepText));
                     break;
                 case TokenType.Comment:
                 case TokenType.Language:
