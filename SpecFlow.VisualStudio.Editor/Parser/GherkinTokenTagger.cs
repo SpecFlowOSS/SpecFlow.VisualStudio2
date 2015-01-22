@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Gherkin;
-using Gherkin.Ast;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 
@@ -10,19 +9,14 @@ namespace SpecFlow.VisualStudio.Editor.Parser
 {
     internal sealed class GherkinTokenTagger : ITagger<GherkinTokenTag>
     {
-
-        ITextBuffer _buffer;
+        private readonly ITextBuffer buffer;
 
         internal GherkinTokenTagger(ITextBuffer buffer)
         {
-            _buffer = buffer;
+            this.buffer = buffer;
         }
 
-        public event EventHandler<SnapshotSpanEventArgs> TagsChanged
-        {
-            add { }
-            remove { }
-        }
+        public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
         public IEnumerable<ITagSpan<GherkinTokenTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
@@ -56,32 +50,6 @@ namespace SpecFlow.VisualStudio.Editor.Parser
                         yield return new TagSpan<GherkinTokenTag>(tokenSpan, tokenTag);
                 }
             }
-
-            //var feature = parser.Parse(reader) as Feature;
-
-
-/*
-            foreach (SnapshotSpan curSpan in spans)
-            {
-                ITextSnapshotLine containingLine = curSpan.Start.GetContainingLine();
-                int curLoc = containingLine.Start.Position;
-                string[] tokens = containingLine.GetText().ToLower().Split(' ');
-
-                foreach (string ookToken in tokens)
-                {
-                    if (_ookTypes.ContainsKey(ookToken))
-                    {
-                        var tokenSpan = new SnapshotSpan(curSpan.Snapshot, new Span(curLoc, ookToken.Length));
-                        if (tokenSpan.IntersectsWith(curSpan))
-                            yield return new TagSpan<GherkinTokenTag>(tokenSpan,
-                                new GherkinTokenTag(_ookTypes[ookToken]));
-                    }
-
-                    //add an extra char location because of the space
-                    curLoc += ookToken.Length + 1;
-                }
-            }
-*/
         }
     }
 }
