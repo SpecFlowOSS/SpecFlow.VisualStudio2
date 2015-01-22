@@ -39,6 +39,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Gherkin">
+      <HintPath>..\..\gherkin3\csharp\Gherkin\bin\Debug\Gherkin.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.CoreUtility" />
     <Reference Include="Microsoft.VisualStudio.Text.Data" />
     <Reference Include="Microsoft.VisualStudio.Text.Logic" />
@@ -57,16 +60,28 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EditorClassifierFormat.cs" />
-    <Compile Include="EditorClassifierType.cs" />
+    <Compile Include="Classification\GherkinFileClassificationDefinition.cs" />
+    <Compile Include="Classification\GherkinFileClassifier.cs" />
+    <Compile Include="Classification\GherkinFileClassifierFormats.cs" />
+    <Compile Include="Classification\GherkinFileClassifierProvider.cs" />
+    <Compile Include="Classification\GherkinFileEditorClassifications.cs" />
+    <Compile Include="Parser\GherkinTokenTag.cs" />
     <Compile Include="EditorClassifier.cs" />
+    <Compile Include="Parser\GherkinTokenTagBuilder.cs" />
+    <Compile Include="Parser\GherkinTokenTagger.cs" />
+    <Compile Include="Parser\GherkinTokenTagProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\gherkin3\i18n.json">
+      <Link>i18n.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

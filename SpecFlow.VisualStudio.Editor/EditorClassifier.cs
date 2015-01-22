@@ -1,4 +1,5 @@
-﻿using System;
+﻿/*
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows.Media;
@@ -8,7 +9,6 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace SpecFlow.VisualStudio.Editor
 {
-
     #region Provider definition
     /// <summary>
     /// This class causes a classifier to be added to the set of classifiers. Since 
@@ -69,3 +69,4 @@ namespace SpecFlow.VisualStudio.Editor
     }
     #endregion //Classifier
 }
+*/
