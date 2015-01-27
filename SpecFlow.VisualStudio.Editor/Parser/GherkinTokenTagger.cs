@@ -50,7 +50,7 @@ namespace SpecFlow.VisualStudio.Editor.Parser
 
             var fileContent = snapshot.GetText();
 
-            Gherkin.Parser parser = new Gherkin.Parser();
+            var parser = new GherkinEditorParser();
 
             var reader = new StringReader(fileContent);
             var tokenTagBuilder = new GherkinTokenTagBuilder(snapshot);

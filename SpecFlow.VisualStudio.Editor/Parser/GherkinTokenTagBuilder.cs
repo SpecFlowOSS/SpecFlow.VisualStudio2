@@ -41,5 +41,16 @@ namespace SpecFlow.VisualStudio.Editor.Parser
         {
             return tokenTags.ToArray();
         }
+
+        public void SetNewState(Token token, int newState)
+        {
+            if (token.IsEOF)
+                return;
+
+            var lastTokenTag = tokenTags.Last();
+            if (lastTokenTag.Token != token)
+                throw new Exception("TODO");
+            lastTokenTag.NewState = newState;
+        }
     }
 }

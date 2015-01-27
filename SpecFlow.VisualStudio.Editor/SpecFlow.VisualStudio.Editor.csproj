@@ -87,6 +87,7 @@
     <Compile Include="Classification\GherkinFileEditorClassifications.cs" />
     <Compile Include="Intellisense\CompletionController.cs" />
     <Compile Include="Intellisense\CompletionSource.cs" />
+    <Compile Include="Parser\GherkinEditorParser.cs" />
     <Compile Include="Parser\GherkinTokenTag.cs" />
     <Compile Include="EditorClassifier.cs" />
     <Compile Include="Parser\GherkinTokenTagBuilder.cs" />

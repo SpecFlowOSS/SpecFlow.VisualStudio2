@@ -10,6 +10,7 @@ namespace SpecFlow.VisualStudio.Editor.Parser
         public Token Token { get; private set; }
         public RuleType RuleType { get; private set; }
         public SnapshotSpan Span { get; private set; }
+        public int NewState { get; set; }
 
         public GherkinTokenTag(Token token, RuleType ruleType, ITextSnapshot snapshot)
         {
