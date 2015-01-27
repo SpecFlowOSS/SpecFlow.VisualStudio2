@@ -118,10 +118,10 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
             if (char.IsWhiteSpace(ch))
                 return false;
 
-            var caret = TextView.Caret.Position.BufferPosition;
+            var caretBufferPosition = TextView.Caret.Position.BufferPosition;
 
-            var line = caret.GetContainingLine();
-            var linePrefixText = new SnapshotSpan(line.Start, caret.Subtract(1)).GetText();
+            var line = caretBufferPosition.GetContainingLine();
+            var linePrefixText = new SnapshotSpan(line.Start, caretBufferPosition.Subtract(1)).GetText();
 
             return linePrefixText.All(char.IsWhiteSpace); // start auto completion for the first typed in character in the line 
         }
@@ -176,10 +176,23 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
                 _currentSession = Broker.GetSessions(TextView)[0];
             }
 
+            if (_currentSession != null && _currentSession.SelectedCompletionSet != null)
+            {
+                var completionSet = _currentSession.SelectedCompletionSet;
+                if (completionSet.SelectionStatus.IsSelected &&
+                    completionSet.SelectionStatus.IsUnique &&
+                    completionSet.ApplicableTo.GetSpan(TextView.TextBuffer.CurrentSnapshot).Length >= 3)
+                {
+                    _currentSession.Commit();
+                    _currentSession = null;
+                }
+            }
+
             if (_currentSession != null)
             {
                 _currentSession.Dismissed += CurrentSessionOnDismissed;
                 _currentSession.Committed += CurrentSessionOnDismissed;
+                //NOTE: call _currentSession.Filter() to narrow the list to the applicable items only
             }
 
             return true;

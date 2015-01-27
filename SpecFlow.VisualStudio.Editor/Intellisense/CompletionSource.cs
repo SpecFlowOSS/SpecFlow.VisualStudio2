@@ -47,11 +47,16 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
                 throw new ObjectDisposedException("GherkinFileCompletionSource");
 
             ITextSnapshot snapshot = _buffer.CurrentSnapshot;
-            var triggerPoint = (SnapshotPoint)session.GetTriggerPoint(snapshot);
+            var triggerPoint = session.GetTriggerPoint(snapshot);
 
             if (triggerPoint == null)
                 return;
 
+            AugmentCompletionSession(completionSets, triggerPoint.Value, snapshot);
+        }
+
+        private void AugmentCompletionSession(IList<CompletionSet> completionSets, SnapshotPoint triggerPoint, ITextSnapshot snapshot)
+        {
             var line = triggerPoint.GetContainingLine();
 
             List<Completion> completions = new List<Completion>();
@@ -62,16 +67,26 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
             if (completions.Count == 0)
                 return;
 
-            SnapshotPoint start = triggerPoint;
+            var applicableToSpan = CalculateApplicableToSpan(triggerPoint, line);
+            var applicableToText = applicableToSpan.GetText();
+            if (applicableToText.Length > 0 && completions.Any(c => applicableToText.StartsWith(c.InsertionText)))
+                return;
 
-            while (start > line.Start && !char.IsWhiteSpace((start - 1).GetChar()))
+            var applicableTo = snapshot.CreateTrackingSpan(applicableToSpan, SpanTrackingMode.EdgeInclusive);
+            completionSets.Add(new CompletionSet("Gherkin", "Gherkin", applicableTo, completions, Enumerable.Empty<Completion>()));
+        }
+
+        private static SnapshotSpan CalculateApplicableToSpan(SnapshotPoint triggerPoint, ITextSnapshotLine line)
+        {
+            SnapshotPoint start = line.Start;
+
+            while (start < triggerPoint && char.IsWhiteSpace(start.GetChar()))
             {
-                start -= 1;
+                start += 1;
             }
 
-            var applicableTo = snapshot.CreateTrackingSpan(new SnapshotSpan(start, triggerPoint), SpanTrackingMode.EdgeInclusive);
-
-            completionSets.Add(new CompletionSet("All", "All", applicableTo, completions, Enumerable.Empty<Completion>()));
+            var applicableToSpan = new SnapshotSpan(start, triggerPoint);
+            return applicableToSpan;
         }
 
         private void AddCompletionsFromExpectedTokens(TokenType[] expectedTokens, List<Completion> completions, GherkinDialect dialect)
