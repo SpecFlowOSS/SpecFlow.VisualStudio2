@@ -73,7 +73,7 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
                 {
                     case VSConstants.VSStd2KCmdID.AUTOCOMPLETE:
                     case VSConstants.VSStd2KCmdID.COMPLETEWORD:
-                        handled = StartSession();
+                        handled = TriggerCompletion();
                         break;
                     case VSConstants.VSStd2KCmdID.RETURN:
                         handled = Complete(false);
@@ -99,7 +99,7 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
                         case VSConstants.VSStd2KCmdID.TYPECHAR:
                             char ch = GetTypeChar(pvaIn);
                             if (_currentSession == null && ShouldStartSession(ch))
-                                StartSession();
+                                TriggerCompletion();
                             else if (_currentSession != null)
                                 Filter();
                             break;
@@ -131,8 +131,19 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
             if (_currentSession == null)
                 return;
 
-            _currentSession.SelectedCompletionSet.SelectBestMatch();
-            _currentSession.SelectedCompletionSet.Recalculate();
+            var completionSet = _currentSession.SelectedCompletionSet;
+
+            completionSet.SelectBestMatch();
+            completionSet.Recalculate();
+
+            if (completionSet.SelectionStatus.IsSelected &&
+                completionSet.SelectionStatus.IsUnique &&
+                completionSet.ApplicableTo.GetSpan(TextView.TextBuffer.CurrentSnapshot).GetText().Equals(completionSet.SelectionStatus.Completion.InsertionText, StringComparison.CurrentCultureIgnoreCase))
+            {
+                _currentSession.Commit();
+                _currentSession = null;
+            }
+
         }
 
         bool Cancel()
@@ -162,18 +173,20 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
             }
         }
 
-        bool StartSession()
+        bool TriggerCompletion()
         {
-            if (_currentSession != null)
-                return false;
-
-            if (!Broker.IsCompletionActive(TextView))
+            if (_currentSession == null)
             {
-                _currentSession = Broker.TriggerCompletion(TextView);
-            }
-            else
-            {
-                _currentSession = Broker.GetSessions(TextView)[0];
+                if (!Broker.IsCompletionActive(TextView))
+                {
+                    _currentSession = Broker.TriggerCompletion(TextView);
+                    _currentSession.Dismissed += CurrentSessionOnDismissed;
+                    _currentSession.Committed += CurrentSessionOnDismissed;
+                }
+                else
+                {
+                    _currentSession = Broker.GetSessions(TextView)[0];
+                }
             }
 
             if (_currentSession != null && _currentSession.SelectedCompletionSet != null)
@@ -190,8 +203,6 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
 
             if (_currentSession != null)
             {
-                _currentSession.Dismissed += CurrentSessionOnDismissed;
-                _currentSession.Committed += CurrentSessionOnDismissed;
                 //NOTE: call _currentSession.Filter() to narrow the list to the applicable items only
             }
 
