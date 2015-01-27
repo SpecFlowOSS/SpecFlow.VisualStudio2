@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Editor;
@@ -97,7 +98,7 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
                     {
                         case VSConstants.VSStd2KCmdID.TYPECHAR:
                             char ch = GetTypeChar(pvaIn);
-                            if (ch == ' ')
+                            if (_currentSession == null && ShouldStartSession(ch))
                                 StartSession();
                             else if (_currentSession != null)
                                 Filter();
@@ -110,6 +111,19 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
             }
 
             return hresult;
+        }
+
+        private bool ShouldStartSession(char ch)
+        {
+            if (char.IsWhiteSpace(ch))
+                return false;
+
+            var caret = TextView.Caret.Position.BufferPosition;
+
+            var line = caret.GetContainingLine();
+            var linePrefixText = new SnapshotSpan(line.Start, caret.Subtract(1)).GetText();
+
+            return linePrefixText.All(char.IsWhiteSpace); // start auto completion for the first typed in character in the line 
         }
 
         private void Filter()
