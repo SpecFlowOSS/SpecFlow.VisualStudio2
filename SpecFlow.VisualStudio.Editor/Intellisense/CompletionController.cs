@@ -180,8 +180,11 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
                 if (!Broker.IsCompletionActive(TextView))
                 {
                     _currentSession = Broker.TriggerCompletion(TextView);
-                    _currentSession.Dismissed += CurrentSessionOnDismissed;
-                    _currentSession.Committed += CurrentSessionOnDismissed;
+                    if (_currentSession != null)
+                    {
+                        _currentSession.Dismissed += CurrentSessionOnDismissed;
+                        _currentSession.Committed += CurrentSessionOnDismissed;
+                    }
                 }
                 else
                 {
