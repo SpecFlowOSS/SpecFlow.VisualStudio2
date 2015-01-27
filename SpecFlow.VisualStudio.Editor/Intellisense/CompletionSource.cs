@@ -138,14 +138,14 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
         private Tuple<int, GherkinDialect> GetLineStartStateAndDialect(ITextSnapshotLine line)
         {
             var state = new Tuple<int, GherkinDialect>(0, defaultGherkinDialect);
-            if (line.LineNumber > 0)
+            while (line.LineNumber > 0)
             {
-                var prevLine = line.Snapshot.GetLineFromLineNumber(line.LineNumber - 1);
-                var gherkinMappingTagSpans = gherkinTagAggregator.GetTags(prevLine.Extent);
+                line = line.Snapshot.GetLineFromLineNumber(line.LineNumber - 1);
+                var gherkinMappingTagSpans = gherkinTagAggregator.GetTags(line.Extent);
                 var tagSpan = gherkinMappingTagSpans.LastOrDefault();
                 if (tagSpan != null)
                 {
-                    state = new Tuple<int, GherkinDialect>(tagSpan.Tag.NewState, tagSpan.Tag.Token.MatchedGherkinDialect);
+                    return new Tuple<int, GherkinDialect>(tagSpan.Tag.NewState, tagSpan.Tag.Token.MatchedGherkinDialect);
                 }
             }
             return state;
