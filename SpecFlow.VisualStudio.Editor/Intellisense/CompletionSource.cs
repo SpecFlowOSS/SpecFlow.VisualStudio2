@@ -30,12 +30,15 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
     {
         private ITextBuffer _buffer;
         private readonly ITagAggregator<GherkinTokenTag> gherkinTagAggregator;
+        private readonly GherkinDialect defaultGherkinDialect;
+
         private bool _disposed = false;
 
         public GherkinFileCompletionSource(ITextBuffer buffer, ITagAggregator<GherkinTokenTag> gherkinTagAggregator)
         {
             _buffer = buffer;
             this.gherkinTagAggregator = gherkinTagAggregator;
+            this.defaultGherkinDialect = new GherkinDialectProvider().DefaultDialect; //TODO: get default dialect from config
         }
 
         public void AugmentCompletionSession(ICompletionSession session, IList<CompletionSet> completionSets)
@@ -52,50 +55,9 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
             var line = triggerPoint.GetContainingLine();
 
             List<Completion> completions = new List<Completion>();
-            var state = GetLineStartState(line);
-            var expectedTokens = GherkinEditorParser.GetExpectedTokens(state);
-            foreach (var expectedToken in expectedTokens)
-            {
-                switch (expectedToken)
-                {
-                    case TokenType.FeatureLine:
-                        completions.Add(new Completion("Feature: "));
-                        break;
-                    case TokenType.BackgroundLine:
-                        completions.Add(new Completion("Background: "));
-                        break;
-                    case TokenType.ScenarioLine:
-                        completions.Add(new Completion("Scenario: "));
-                        break;
-                    case TokenType.ScenarioOutlineLine:
-                        completions.Add(new Completion("Scenario Outline: "));
-                        break;
-                    case TokenType.ExamplesLine:
-                        completions.Add(new Completion("Examples: "));
-                        break;
-                    case TokenType.StepLine:
-                        completions.Add(new Completion("Given "));
-                        completions.Add(new Completion("When "));
-                        completions.Add(new Completion("Then "));
-                        completions.Add(new Completion("And "));
-                        completions.Add(new Completion("But "));
-                        completions.Add(new Completion("* "));
-                        break;
-                    case TokenType.DocStringSeparator:
-                        completions.Add(new Completion("\"\"\""));
-                        completions.Add(new Completion("'''"));
-                        break;
-                    case TokenType.TableRow:
-                        completions.Add(new Completion("| "));
-                        break;
-                    case TokenType.Language:
-                        completions.Add(new Completion("#language: "));
-                        break;
-                    case TokenType.TagLine:
-                        completions.Add(new Completion("@mytag "));
-                        break;
-                }
-            }
+            var stateAndDialect = GetLineStartStateAndDialect(line);
+            var expectedTokens = GherkinEditorParser.GetExpectedTokens(stateAndDialect.Item1);
+            AddCompletionsFromExpectedTokens(expectedTokens, completions, stateAndDialect.Item2);
 
             if (completions.Count == 0)
                 return;
@@ -112,9 +74,55 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
             completionSets.Add(new CompletionSet("All", "All", applicableTo, completions, Enumerable.Empty<Completion>()));
         }
 
-        private int GetLineStartState(ITextSnapshotLine line)
+        private void AddCompletionsFromExpectedTokens(TokenType[] expectedTokens, List<Completion> completions, GherkinDialect dialect)
         {
-            var state = 0;
+            foreach (var expectedToken in expectedTokens)
+            {
+                switch (expectedToken)
+                {
+                    case TokenType.FeatureLine:
+                        AddCompletions(completions, dialect.FeatureKeywords, ": ");
+                        break;
+                    case TokenType.BackgroundLine:
+                        AddCompletions(completions, dialect.BackgroundKeywords, ": ");
+                        break;
+                    case TokenType.ScenarioLine:
+                        AddCompletions(completions, dialect.ScenarioKeywords, ": ");
+                        break;
+                    case TokenType.ScenarioOutlineLine:
+                        AddCompletions(completions, dialect.ScenarioOutlineKeywords, ": ");
+                        break;
+                    case TokenType.ExamplesLine:
+                        AddCompletions(completions, dialect.ExamplesKeywords, ": ");
+                        break;
+                    case TokenType.StepLine:
+                        AddCompletions(completions, dialect.StepKeywords);
+                        break;
+                    case TokenType.DocStringSeparator:
+                        completions.Add(new Completion("\"\"\""));
+                        completions.Add(new Completion("'''"));
+                        break;
+                    case TokenType.TableRow:
+                        completions.Add(new Completion("| "));
+                        break;
+                    case TokenType.Language:
+                        completions.Add(new Completion("#language: "));
+                        break;
+                    case TokenType.TagLine:
+                        completions.Add(new Completion("@mytag "));
+                        break;
+                }
+            }
+        }
+
+        private void AddCompletions(List<Completion> completions, string[] keywords, string postfix = "")
+        {
+            completions.AddRange(keywords.Select(keyword => new Completion(keyword + postfix)));
+        }
+
+        private Tuple<int, GherkinDialect> GetLineStartStateAndDialect(ITextSnapshotLine line)
+        {
+            var state = new Tuple<int, GherkinDialect>(0, defaultGherkinDialect);
             if (line.LineNumber > 0)
             {
                 var prevLine = line.Snapshot.GetLineFromLineNumber(line.LineNumber - 1);
@@ -122,7 +130,7 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
                 var tagSpan = gherkinMappingTagSpans.LastOrDefault();
                 if (tagSpan != null)
                 {
-                    state = tagSpan.Tag.NewState;
+                    state = new Tuple<int, GherkinDialect>(tagSpan.Tag.NewState, tagSpan.Tag.Token.MatchedGherkinDialect);
                 }
             }
             return state;
