@@ -167,22 +167,29 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
             if (_currentSession != null)
                 return false;
 
-            SnapshotPoint caret = TextView.Caret.Position.BufferPosition;
-            ITextSnapshot snapshot = caret.Snapshot;
-
             if (!Broker.IsCompletionActive(TextView))
             {
-                _currentSession = Broker.CreateCompletionSession(TextView, snapshot.CreateTrackingPoint(caret, PointTrackingMode.Positive), true);
+                _currentSession = Broker.TriggerCompletion(TextView);
             }
             else
             {
                 _currentSession = Broker.GetSessions(TextView)[0];
             }
-            _currentSession.Dismissed += (sender, args) => _currentSession = null;
 
-            _currentSession.Start();
+            if (_currentSession != null)
+            {
+                _currentSession.Dismissed += CurrentSessionOnDismissed;
+                _currentSession.Committed += CurrentSessionOnDismissed;
+            }
 
             return true;
+        }
+
+        private void CurrentSessionOnDismissed(object sender, EventArgs eventArgs)
+        {
+            _currentSession.Dismissed -= CurrentSessionOnDismissed;
+            _currentSession.Committed -= CurrentSessionOnDismissed;
+            _currentSession = null;
         }
 
         public int QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[] prgCmds, IntPtr pCmdText)
