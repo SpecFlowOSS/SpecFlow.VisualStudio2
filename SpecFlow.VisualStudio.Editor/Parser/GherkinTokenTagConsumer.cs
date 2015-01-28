@@ -32,6 +32,11 @@ namespace SpecFlow.VisualStudio.Editor.Parser
             this.gherkinTagAggregator.BatchedTagsChanged -= GherkinTagAggregatorOnBatchedTagsChanged;
         }
 
+        protected IEnumerable<KeyValuePair<SnapshotSpan, GherkinTokenTag>> GetGherkinTags(SnapshotSpan span, Predicate<GherkinTokenTag> filter = null)
+        {
+            return GetGherkinTags(new NormalizedSnapshotSpanCollection(span), filter);
+        }
+
         protected IEnumerable<KeyValuePair<SnapshotSpan, GherkinTokenTag>> GetGherkinTags(NormalizedSnapshotSpanCollection spans, Predicate<GherkinTokenTag> filter = null)
         {
             var snapshot = spans[0].Snapshot;
@@ -39,13 +44,9 @@ namespace SpecFlow.VisualStudio.Editor.Parser
             if (filter != null)
                 gherkinMappingTagSpans = gherkinMappingTagSpans.Where(t => filter(t.Tag));
 
-            foreach (var mappingTagSpan in gherkinMappingTagSpans)
-            {
-                foreach (var mappedTagSpan in mappingTagSpan.Span.GetSpans(snapshot))
-                {
-                    yield return new KeyValuePair<SnapshotSpan, GherkinTokenTag>(mappedTagSpan, mappingTagSpan.Tag);
-                }
-            }
+            return gherkinMappingTagSpans.SelectMany(
+                mappingTagSpan => mappingTagSpan.Span.GetSpans(snapshot),
+                (mappingTagSpan, mappedTagSpan) => new KeyValuePair<SnapshotSpan, GherkinTokenTag>(mappedTagSpan, mappingTagSpan.Tag));
         }
     }
 }

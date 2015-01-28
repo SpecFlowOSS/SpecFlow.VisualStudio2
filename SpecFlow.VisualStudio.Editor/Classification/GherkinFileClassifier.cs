@@ -9,36 +9,24 @@ using SpecFlow.VisualStudio.Editor.Parser;
 
 namespace SpecFlow.VisualStudio.Editor.Classification
 {
-    internal class GherkinFileClassifier : IClassifier
+    internal class GherkinFileClassifier : GherkinTokenTagConsumer, IClassifier
     {
-        private readonly ITextBuffer buffer;
-        private readonly ITagAggregator<GherkinTokenTag> gherkinTagAggregator;
         private readonly GherkinFileEditorClassifications gherkinFileEditorClassifications;
 
         public GherkinFileClassifier(ITextBuffer buffer, ITagAggregator<GherkinTokenTag> gherkinTagAggregator, IClassificationTypeRegistryService classificationTypeRegistryService)
+            : base(buffer, gherkinTagAggregator)
         {
-            this.buffer = buffer;
-            this.gherkinTagAggregator = gherkinTagAggregator;
 
             gherkinFileEditorClassifications = new GherkinFileEditorClassifications(classificationTypeRegistryService);
-
-            this.gherkinTagAggregator.BatchedTagsChanged += (sender, args) =>
-            {
-                //TODO: raise event only for the span received in args
-                if (ClassificationChanged != null)
-                    ClassificationChanged(sender, new ClassificationChangedEventArgs(new SnapshotSpan(buffer.CurrentSnapshot, 0, buffer.CurrentSnapshot.Length)));
-            };
         }
 
         public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span)
         {
             List<ClassificationSpan> classifications = new List<ClassificationSpan>();
 
-            var gherkinMappingTagSpans = gherkinTagAggregator.GetTags(span).Where(t => t.Tag.IsToken);
-            foreach (var mappingTagSpan in gherkinMappingTagSpans)
+            foreach (var gherkinTagSpan in GetGherkinTags(span, t => t.IsToken))
             {
-                var tagSpans = mappingTagSpan.Span.GetSpans(span.Snapshot);
-                AddClassifications(classifications, mappingTagSpan.Tag, tagSpans[0]);
+                AddClassifications(classifications, gherkinTagSpan.Value, gherkinTagSpan.Key);
             }
 
             return classifications;
@@ -96,11 +84,15 @@ namespace SpecFlow.VisualStudio.Editor.Classification
             }
         }
 
-#pragma warning disable 67
         // This event gets raised if a non-text change would affect the classification in some way,
         // for example typing /* would cause the classification to change in C# without directly
         // affecting the span.
         public event EventHandler<ClassificationChangedEventArgs> ClassificationChanged;
-#pragma warning restore 67
+        protected override void RaiseChanged(SnapshotSpan span)
+        {
+            var classificationChanged = ClassificationChanged;
+            if (classificationChanged != null)
+                classificationChanged(this, new ClassificationChangedEventArgs(span));
+        }
     }
 }
