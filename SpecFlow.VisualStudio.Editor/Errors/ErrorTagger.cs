@@ -2,43 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 using SpecFlow.VisualStudio.Editor.Parser;
 
 namespace SpecFlow.VisualStudio.Editor.Errors
 {
-    internal class ErrorTagger : ITagger<ErrorTag>
+    internal class ErrorTagger : GherkinTokenTagConsumer, ITagger<ErrorTag>
     {
-        private readonly ITextBuffer buffer;
-        private readonly ITagAggregator<GherkinTokenTag> gherkinTagAggregator;
-
-        public ErrorTagger(ITextBuffer buffer, ITagAggregator<GherkinTokenTag> gherkinTagAggregator)
+        public ErrorTagger(ITextBuffer buffer, ITagAggregator<GherkinTokenTag> gherkinTagAggregator) : base(buffer, gherkinTagAggregator)
         {
-            this.buffer = buffer;
-            this.gherkinTagAggregator = gherkinTagAggregator;
-
-            this.gherkinTagAggregator.BatchedTagsChanged += (sender, args) =>
-            {
-                //TODO: raise event only for the span received in args
-                if (TagsChanged != null)
-                    TagsChanged(sender, new SnapshotSpanEventArgs(new SnapshotSpan(buffer.CurrentSnapshot, 0, buffer.CurrentSnapshot.Length)));
-            };
         }
 
         public IEnumerable<ITagSpan<ErrorTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
-            var snapshot = spans[0].Snapshot;
-            var gherkinMappingTagSpans = gherkinTagAggregator.GetTags(spans).Where(t => t.Tag.IsError);
-            foreach (var mappingTagSpan in gherkinMappingTagSpans)
-            {
-                foreach (var mappedTagSpan in mappingTagSpan.Span.GetSpans(snapshot))
-                {
-                    yield return new TagSpan<ErrorTag>(mappedTagSpan, new ErrorTag("syntax error", mappingTagSpan.Tag.ParserException.Message));
-                }
-            }
+            return GetGherkinTags(spans, t => t.IsError)
+                .Select(gherkinTagSpan => new TagSpan<ErrorTag>(gherkinTagSpan.Key, new ErrorTag("syntax error", gherkinTagSpan.Value.ParserException.Message)));
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+        protected override void RaiseChanged(SnapshotSpan span)
+        {
+            var tagsChanged = TagsChanged;
+            if (tagsChanged != null)
+                tagsChanged(this, new SnapshotSpanEventArgs(span));
+        }
     }
 }
