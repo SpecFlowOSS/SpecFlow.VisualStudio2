@@ -14,7 +14,8 @@ namespace SpecFlow.VisualStudio.Editor.Parser
         protected override int MatchToken(int state, Token token, ParserContext context)
         {
             var newState = base.MatchToken(state, token, context);
-            ((GherkinTokenTagBuilder)context.Builder).SetNewState(token, newState);
+            if (token.MatchedType != TokenType.None)
+                ((GherkinTokenTagBuilder)context.Builder).SetNewState(token, newState);
             return newState;
         }
 

@@ -141,7 +141,7 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
             while (line.LineNumber > 0)
             {
                 line = line.Snapshot.GetLineFromLineNumber(line.LineNumber - 1);
-                var gherkinMappingTagSpans = gherkinTagAggregator.GetTags(line.Extent);
+                var gherkinMappingTagSpans = gherkinTagAggregator.GetTags(line.Extent).Where(t => t.Tag.IsToken);
                 var tagSpan = gherkinMappingTagSpans.LastOrDefault();
                 if (tagSpan != null)
                 {

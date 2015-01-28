@@ -34,7 +34,7 @@ namespace SpecFlow.VisualStudio.Editor.Classification
         {
             List<ClassificationSpan> classifications = new List<ClassificationSpan>();
 
-            var gherkinMappingTagSpans = gherkinTagAggregator.GetTags(span);
+            var gherkinMappingTagSpans = gherkinTagAggregator.GetTags(span).Where(t => t.Tag.IsToken);
             foreach (var mappingTagSpan in gherkinMappingTagSpans)
             {
                 var tagSpans = mappingTagSpan.Span.GetSpans(span.Snapshot);

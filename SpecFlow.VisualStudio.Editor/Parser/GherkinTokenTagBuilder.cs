@@ -49,7 +49,8 @@ namespace SpecFlow.VisualStudio.Editor.Parser
 
             var lastTokenTag = tokenTags.Last();
             if (lastTokenTag.Token != token)
-                throw new Exception("TODO");
+                return;
+
             lastTokenTag.NewState = newState;
         }
     }

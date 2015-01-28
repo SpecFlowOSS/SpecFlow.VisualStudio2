@@ -85,6 +85,8 @@
     <Compile Include="Classification\GherkinFileClassifierFormats.cs" />
     <Compile Include="Classification\GherkinFileClassifierProvider.cs" />
     <Compile Include="Classification\GherkinFileEditorClassifications.cs" />
+    <Compile Include="Errors\ErrorTagger.cs" />
+    <Compile Include="Errors\ErrorTaggerProvider.cs" />
     <Compile Include="Intellisense\CompletionController.cs" />
     <Compile Include="Intellisense\CompletionSource.cs" />
     <Compile Include="Parser\GherkinEditorParser.cs" />

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Gherkin;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
@@ -50,6 +52,8 @@ namespace SpecFlow.VisualStudio.Editor.Parser
 
             var fileContent = snapshot.GetText();
 
+            var parserErrors = new List<ParserException>();
+
             var parser = new GherkinEditorParser();
 
             var reader = new StringReader(fileContent);
@@ -58,22 +62,35 @@ namespace SpecFlow.VisualStudio.Editor.Parser
             {
                 parser.Parse(new TokenScanner(reader), new TokenMatcher(), tokenTagBuilder);
             }
+            catch (CompositeParserException compositeParserException)
+            {
+                parserErrors.AddRange(compositeParserException.Errors);
+            }
+            catch (ParserException parserException)
+            {
+                parserErrors.Add(parserException);
+            }
             catch (Exception ex)
             {
                 //nop;
+                Debug.WriteLine(ex);
             }
 
-            var tokenTags = tokenTagBuilder.GetResult() as GherkinTokenTag[];
+
+            var tokenTags = new List<GherkinTokenTag>();
+            tokenTags.AddRange((GherkinTokenTag[])tokenTagBuilder.GetResult());
+            tokenTags.AddRange(parserErrors.Select(e => new GherkinTokenTag(e, snapshot)));
+            tokenTags.Sort((t1, t2) => t1.Span.Start.Position.CompareTo(t2.Span.Start.Position));
 
             //TODO: atomic set?
             lastParsedBufferVersion = snapshot.Version.VersionNumber;
-            lastParsedTokenTags = tokenTags;
+            lastParsedTokenTags = tokenTags.ToArray();
 
             //TODO: only for the changed scope
             if (TagsChanged != null)
                 TagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(snapshot, 0, snapshot.Length)));
 
-            return tokenTags;
+            return lastParsedTokenTags;
         }
     }
 }
