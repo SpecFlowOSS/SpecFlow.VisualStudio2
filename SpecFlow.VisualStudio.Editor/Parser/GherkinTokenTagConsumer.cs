@@ -21,7 +21,21 @@ namespace SpecFlow.VisualStudio.Editor.Parser
 
         private void GherkinTagAggregatorOnBatchedTagsChanged(object sender, BatchedTagsChangedEventArgs batchedTagsChangedEventArgs)
         {
-            var span = new SnapshotSpan(buffer.CurrentSnapshot, 0, buffer.CurrentSnapshot.Length); //TODO: raise event only for the span received in args
+            var snapshot = buffer.CurrentSnapshot;
+            var spans = batchedTagsChangedEventArgs.Spans.SelectMany(mappingSpan => mappingSpan.GetSpans(snapshot), (mappingSpan, mappedTagSpan) => mappedTagSpan);
+
+            var start = int.MaxValue;
+            var end = 0;
+            foreach (var sourceSpan in spans)
+            {
+                start = Math.Min(start, sourceSpan.Start.Position);
+                end = Math.Max(end, sourceSpan.End.Position);
+            }
+
+            if (start == int.MaxValue || end <= start)    
+                return;
+
+            var span = new SnapshotSpan(snapshot, start, end - start);
             RaiseChanged(span);
         }
 
