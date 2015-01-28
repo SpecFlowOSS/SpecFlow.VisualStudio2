@@ -32,8 +32,10 @@ namespace SpecFlow.VisualStudio.Editor.Errors
             var gherkinMappingTagSpans = gherkinTagAggregator.GetTags(spans).Where(t => t.Tag.IsError);
             foreach (var mappingTagSpan in gherkinMappingTagSpans)
             {
-                var tagSpans = mappingTagSpan.Span.GetSpans(snapshot);
-                yield return new TagSpan<ErrorTag>(tagSpans[0], new ErrorTag("syntax error"));
+                foreach (var mappedTagSpan in mappingTagSpan.Span.GetSpans(snapshot))
+                {
+                    yield return new TagSpan<ErrorTag>(mappedTagSpan, new ErrorTag("syntax error", mappingTagSpan.Tag.ParserException.Message));
+                }
             }
         }
 
