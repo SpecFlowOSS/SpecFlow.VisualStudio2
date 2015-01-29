@@ -24,6 +24,7 @@ namespace SpecFlow.VisualStudio.Editor.Outlining
         public IEnumerable<ITagSpan<IOutliningRegionTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
             var snapshot = spans[0].Snapshot;
+            // we recalculate the outlinings for the entire file...
             var tags = GetGherkinTags(new SnapshotSpan(snapshot, 0, snapshot.Length), t => t.IsToken);
 
             SnapshotPoint? lastNonIgnoredLineEnd = null;
@@ -33,14 +34,16 @@ namespace SpecFlow.VisualStudio.Editor.Outlining
             foreach (var gherkinTagSpan in tags)
             {
                 if (!gherkinTagSpan.Value.IsAnyTokenType(TokenType.Empty, TokenType.Comment))
-                    lastNonIgnoredLineEnd = gherkinTagSpan.Value.Span.Start.GetContainingLine().End;
+                    lastNonIgnoredLineEnd = gherkinTagSpan.Value.Span.End;
 
+                // finds the most outer level that has to be closed
                 var levelToClose = OutlineGroups.FindIndex(0, outlineStartTags.Count,
                     outlineGroup => gherkinTagSpan.Value.FinishesAnyRule(outlineGroup));
                 if (levelToClose >= 0)
                 {
                     Debug.Assert(lastNonIgnoredLineEnd != null);
 
+                    // closes all outlining levels up to the expected one
                     while (outlineStartTags.Count > levelToClose)
                     {
                         var startTag = outlineStartTags.Pop();
@@ -48,6 +51,7 @@ namespace SpecFlow.VisualStudio.Editor.Outlining
                     }
                 }
 
+                // checks if new outlinings should be open
                 foreach (var outlineGroup in OutlineGroups.Skip(outlineStartTags.Count))
                 {
                     if (gherkinTagSpan.Value.StartsAnyRule(outlineGroup))
