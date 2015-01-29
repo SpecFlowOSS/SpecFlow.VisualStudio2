@@ -20,6 +20,7 @@ namespace SpecFlow.VisualStudio.Editor.Outlining
             var tags = GetGherkinTags(new SnapshotSpan(snapshot, 0, snapshot.Length), t => t.IsToken);
 
             SnapshotPoint? startPoint = null;
+            SnapshotPoint? level2StartPoint = null;
             SnapshotPoint? lastNonIgnoredLineEnd = null;
             foreach (var gherkinTagSpan in tags)
             {
@@ -29,14 +30,30 @@ namespace SpecFlow.VisualStudio.Editor.Outlining
                 if (startPoint != null && lastNonIgnoredLineEnd != null && 
                     gherkinTagSpan.Value.FinishesAnyRule(RuleType.Scenario, RuleType.ScenarioOutline, RuleType.Background))
                 {
+                    if (level2StartPoint != null)
+                    {
+                        yield return CreateOutliningRegionTag(level2StartPoint.Value, lastNonIgnoredLineEnd.Value);
+                        level2StartPoint = null;
+                    }
+
                     yield return CreateOutliningRegionTag(startPoint.Value, lastNonIgnoredLineEnd.Value);
+                }
+
+                if (level2StartPoint != null && lastNonIgnoredLineEnd != null &&
+                    gherkinTagSpan.Value.FinishesAnyRule(RuleType.Examples))
+                {
+                    yield return CreateOutliningRegionTag(level2StartPoint.Value, lastNonIgnoredLineEnd.Value);
+                    level2StartPoint = null;
                 }
 
                 if (gherkinTagSpan.Value.StartsAnyRule(RuleType.Scenario, RuleType.ScenarioOutline, RuleType.Background))
                 {
-                    startPoint = gherkinTagSpan.Value.Span.Start.GetContainingLine().Start;
+                    startPoint = gherkinTagSpan.Value.Span.Start;
                 }
-
+                if (gherkinTagSpan.Value.StartsAnyRule(RuleType.Examples))
+                {
+                    level2StartPoint = gherkinTagSpan.Value.Span.Start;
+                }
             }
         }
 
