@@ -3,6 +3,9 @@
 	As a math idiot
 	I want to be told the sum of two numbers
 
+Background: 
+	Given there is something in the background
+
 @mytag
 Scenario: Add two numbers
 	Given I have entered 50 into the calculator
