@@ -20,23 +20,24 @@ namespace SpecFlow.VisualStudio.Editor.Outlining
             var tags = GetGherkinTags(new SnapshotSpan(snapshot, 0, snapshot.Length), t => t.IsToken);
 
             SnapshotPoint? startPoint = null;
-            SnapshotPoint? endPoint = null;
+            SnapshotPoint? lastNonIgnoredLineEnd = null;
             foreach (var gherkinTagSpan in tags)
             {
+                if (!gherkinTagSpan.Value.IsAnyTokenType(TokenType.Empty, TokenType.Comment))
+                    lastNonIgnoredLineEnd = gherkinTagSpan.Value.Span.Start.GetContainingLine().End;
+
+                if (startPoint != null && lastNonIgnoredLineEnd != null && 
+                    gherkinTagSpan.Value.FinishesAnyRule(RuleType.Scenario, RuleType.ScenarioOutline, RuleType.Background))
+                {
+                    yield return CreateOutliningRegionTag(startPoint.Value, lastNonIgnoredLineEnd.Value);
+                }
+
                 if (gherkinTagSpan.Value.StartsAnyRule(RuleType.Scenario, RuleType.ScenarioOutline, RuleType.Background))
                 {
-                    if (startPoint != null && endPoint != null)
-                        yield return CreateOutliningRegionTag(startPoint.Value, endPoint.Value);
-
                     startPoint = gherkinTagSpan.Value.Span.Start.GetContainingLine().Start;
                 }
 
-                if (!gherkinTagSpan.Value.IsAnyTokenType(TokenType.Empty, TokenType.TagLine, TokenType.Comment))
-                    endPoint = gherkinTagSpan.Value.Span.Start.GetContainingLine().End;
             }
-
-            if (startPoint != null && endPoint != null)
-                yield return CreateOutliningRegionTag(startPoint.Value, endPoint.Value);
         }
 
         private static TagSpan<IOutliningRegionTag> CreateOutliningRegionTag(SnapshotPoint startPoint, SnapshotPoint endPoint)

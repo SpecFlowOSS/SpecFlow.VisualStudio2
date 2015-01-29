@@ -63,7 +63,7 @@ namespace SpecFlow.VisualStudio.Editor.Classification
                     break;
                 case TokenType.Other:
                     var classificationType = 
-                        tag.RuleTypes.Contains(RuleType.DocString) ? 
+                        tag.RuleTypesStarted.Contains(RuleType.DocString) ? 
                         gherkinFileEditorClassifications.MultilineText :
                         gherkinFileEditorClassifications.Description;
                     classifications.Add(new ClassificationSpan(new SnapshotSpan(tagSpan.Start, tagSpan.End), classificationType));

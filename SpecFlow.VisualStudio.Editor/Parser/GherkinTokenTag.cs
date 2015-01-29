@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Gherkin;
 using Gherkin.Ast;
@@ -11,16 +12,18 @@ namespace SpecFlow.VisualStudio.Editor.Parser
     {
         public ParserException ParserException { get; private set; }
         public Token Token { get; private set; }
-        public RuleType[] RuleTypes { get; private set; }
+        public RuleType[] RuleTypesStarted { get; private set; }
+        public List<RuleType> RuleTypesFinished { get; private set; } 
         public SnapshotSpan Span { get; private set; }
         public int NewState { get; set; }
         public bool IsToken { get { return Token != null; } }
         public bool IsError { get { return ParserException != null; } }
 
-        public GherkinTokenTag(Token token, RuleType[] ruleTypes, ITextSnapshot snapshot)
+        public GherkinTokenTag(Token token, RuleType[] ruleTypesStarted, ITextSnapshot snapshot)
         {
             this.Token = token;
-            RuleTypes = ruleTypes;
+            RuleTypesStarted = ruleTypesStarted;
+            RuleTypesFinished = new List<RuleType>();
             Span = GetSpan(snapshot, token.Location);
         }
 
@@ -45,7 +48,13 @@ namespace SpecFlow.VisualStudio.Editor.Parser
         public bool StartsAnyRule(params RuleType[] ruleTypes)
         {
             if (ruleTypes == null || ruleTypes.Length == 0) throw new ArgumentNullException("ruleTypes");
-            return ruleTypes.Any(ruleType => RuleTypes.Contains(ruleType));
+            return ruleTypes.Any(ruleType => RuleTypesStarted.Contains(ruleType));
+        }
+
+        public bool FinishesAnyRule(params RuleType[] ruleTypes)
+        {
+            if (ruleTypes == null || ruleTypes.Length == 0) throw new ArgumentNullException("ruleTypes");
+            return ruleTypes.Any(ruleType => RuleTypesFinished.Contains(ruleType));
         }
 
         public bool IsAnyTokenType(params TokenType[] tokenTypes)

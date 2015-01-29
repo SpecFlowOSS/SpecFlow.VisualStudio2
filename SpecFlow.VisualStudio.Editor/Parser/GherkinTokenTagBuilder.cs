@@ -35,7 +35,11 @@ namespace SpecFlow.VisualStudio.Editor.Parser
 
         public void EndRule(RuleType ruleType)
         {
-            //nop
+            var lastToenTag = tokenTags.LastOrDefault();
+            if (lastToenTag == null)
+                return;
+
+            lastToenTag.RuleTypesFinished.Add(ruleType);
         }
 
         public object GetResult()
