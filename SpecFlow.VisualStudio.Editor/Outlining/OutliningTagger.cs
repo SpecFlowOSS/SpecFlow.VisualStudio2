@@ -62,8 +62,10 @@ namespace SpecFlow.VisualStudio.Editor.Outlining
 
         private static TagSpan<IOutliningRegionTag> CreateOutliningRegionTag(SnapshotPoint startPoint, SnapshotPoint endPoint, GherkinTokenTag tag)
         {
+            var outliningSpan = new SnapshotSpan(startPoint, endPoint);
             var collapsedText = tag.Token.GetTokenValue();
-            return new TagSpan<IOutliningRegionTag>(new SnapshotSpan(startPoint, endPoint), new OutliningRegionTag(false, false, collapsedText, "TODO"));
+            var hintText = new OutliningHintTextProvider(outliningSpan);
+            return new TagSpan<IOutliningRegionTag>(outliningSpan, new OutliningRegionTag(false, false, collapsedText, hintText));
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
