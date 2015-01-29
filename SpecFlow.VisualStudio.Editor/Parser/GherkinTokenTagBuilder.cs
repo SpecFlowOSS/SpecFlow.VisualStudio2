@@ -12,7 +12,7 @@ namespace SpecFlow.VisualStudio.Editor.Parser
     {
         private readonly ITextSnapshot snapshot;
         private List<GherkinTokenTag> tokenTags = new List<GherkinTokenTag>();
-        private RuleType lastRuleType = RuleType.None;
+        private List<RuleType> lastRuleTypes = new List<RuleType>();
 
         public GherkinTokenTagBuilder(ITextSnapshot snapshot)
         {
@@ -24,12 +24,13 @@ namespace SpecFlow.VisualStudio.Editor.Parser
             if (token.IsEOF)
                 return;
 
-            tokenTags.Add(new GherkinTokenTag(token, lastRuleType, snapshot));
+            tokenTags.Add(new GherkinTokenTag(token, lastRuleTypes.ToArray(), snapshot));
+            lastRuleTypes.Clear();
         }
 
         public void StartRule(RuleType ruleType)
         {
-            lastRuleType = ruleType;
+            lastRuleTypes.Add(ruleType);
         }
 
         public void EndRule(RuleType ruleType)

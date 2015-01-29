@@ -89,6 +89,8 @@
     <Compile Include="Errors\ErrorTaggerProvider.cs" />
     <Compile Include="Intellisense\CompletionController.cs" />
     <Compile Include="Intellisense\CompletionSource.cs" />
+    <Compile Include="Outlining\OutliningTagger.cs" />
+    <Compile Include="Outlining\OutliningTaggerProvider.cs" />
     <Compile Include="Parser\GherkinEditorParser.cs" />
     <Compile Include="Parser\GherkinTokenTag.cs" />
     <Compile Include="EditorClassifier.cs" />

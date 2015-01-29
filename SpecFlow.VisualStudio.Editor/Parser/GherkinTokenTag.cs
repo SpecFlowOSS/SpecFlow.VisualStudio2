@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Gherkin;
 using Gherkin.Ast;
 using Microsoft.VisualStudio.Text;
@@ -10,16 +11,16 @@ namespace SpecFlow.VisualStudio.Editor.Parser
     {
         public ParserException ParserException { get; private set; }
         public Token Token { get; private set; }
-        public RuleType RuleType { get; private set; }
+        public RuleType[] RuleTypes { get; private set; }
         public SnapshotSpan Span { get; private set; }
         public int NewState { get; set; }
         public bool IsToken { get { return Token != null; } }
         public bool IsError { get { return ParserException != null; } }
 
-        public GherkinTokenTag(Token token, RuleType ruleType, ITextSnapshot snapshot)
+        public GherkinTokenTag(Token token, RuleType[] ruleTypes, ITextSnapshot snapshot)
         {
             this.Token = token;
-            RuleType = ruleType;
+            RuleTypes = ruleTypes;
             Span = GetSpan(snapshot, token.Location);
         }
 
@@ -39,6 +40,19 @@ namespace SpecFlow.VisualStudio.Editor.Parser
                 location.Column == 0 ? 0 // whole line error
                 : location.Column - 1);
             return new SnapshotSpan(start, line.End);
+        }
+
+        public bool StartsAnyRule(params RuleType[] ruleTypes)
+        {
+            if (ruleTypes == null || ruleTypes.Length == 0) throw new ArgumentNullException("ruleTypes");
+            return ruleTypes.Any(ruleType => RuleTypes.Contains(ruleType));
+        }
+
+        public bool IsAnyTokenType(params TokenType[] tokenTypes)
+        {
+            if (tokenTypes == null || tokenTypes.Length == 0) throw new ArgumentNullException("tokenTypes");
+
+            return tokenTypes.Contains(Token.MatchedType);
         }
     }
 }
