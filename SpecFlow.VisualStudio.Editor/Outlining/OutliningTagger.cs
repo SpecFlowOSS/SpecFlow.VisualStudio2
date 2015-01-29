@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Gherkin;
 using Microsoft.VisualStudio.Text;
@@ -14,45 +15,43 @@ namespace SpecFlow.VisualStudio.Editor.Outlining
         {
         }
 
+        static private readonly List<RuleType[]> OutlineGroups = new List<RuleType[]>
+            {
+                new []{ RuleType.Scenario, RuleType.ScenarioOutline, RuleType.Background }, // level-0
+                new []{ RuleType.Examples, RuleType.DataTable, RuleType.DocString } // level-1
+            };
+
         public IEnumerable<ITagSpan<IOutliningRegionTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
             var snapshot = spans[0].Snapshot;
             var tags = GetGherkinTags(new SnapshotSpan(snapshot, 0, snapshot.Length), t => t.IsToken);
 
-            SnapshotPoint? startPoint = null;
-            SnapshotPoint? level2StartPoint = null;
             SnapshotPoint? lastNonIgnoredLineEnd = null;
+
+            Stack<SnapshotPoint> outlineStarts = new Stack<SnapshotPoint>();
+
             foreach (var gherkinTagSpan in tags)
             {
                 if (!gherkinTagSpan.Value.IsAnyTokenType(TokenType.Empty, TokenType.Comment))
                     lastNonIgnoredLineEnd = gherkinTagSpan.Value.Span.Start.GetContainingLine().End;
 
-                if (startPoint != null && lastNonIgnoredLineEnd != null && 
-                    gherkinTagSpan.Value.FinishesAnyRule(RuleType.Scenario, RuleType.ScenarioOutline, RuleType.Background))
+                var levelToClose = OutlineGroups.FindIndex(0, outlineStarts.Count,
+                    outlineGroup => gherkinTagSpan.Value.FinishesAnyRule(outlineGroup));
+                if (levelToClose >= 0)
                 {
-                    if (level2StartPoint != null)
+                    Debug.Assert(lastNonIgnoredLineEnd != null);
+
+                    while (outlineStarts.Count > levelToClose)
                     {
-                        yield return CreateOutliningRegionTag(level2StartPoint.Value, lastNonIgnoredLineEnd.Value);
-                        level2StartPoint = null;
+                        var startPoint = outlineStarts.Pop();
+                        yield return CreateOutliningRegionTag(startPoint, lastNonIgnoredLineEnd.Value);
                     }
-
-                    yield return CreateOutliningRegionTag(startPoint.Value, lastNonIgnoredLineEnd.Value);
                 }
 
-                if (level2StartPoint != null && lastNonIgnoredLineEnd != null &&
-                    gherkinTagSpan.Value.FinishesAnyRule(RuleType.Examples))
+                foreach (var outlineGroup in OutlineGroups.Skip(outlineStarts.Count))
                 {
-                    yield return CreateOutliningRegionTag(level2StartPoint.Value, lastNonIgnoredLineEnd.Value);
-                    level2StartPoint = null;
-                }
-
-                if (gherkinTagSpan.Value.StartsAnyRule(RuleType.Scenario, RuleType.ScenarioOutline, RuleType.Background))
-                {
-                    startPoint = gherkinTagSpan.Value.Span.Start;
-                }
-                if (gherkinTagSpan.Value.StartsAnyRule(RuleType.Examples))
-                {
-                    level2StartPoint = gherkinTagSpan.Value.Span.Start;
+                    if (gherkinTagSpan.Value.StartsAnyRule(outlineGroup))
+                        outlineStarts.Push(gherkinTagSpan.Value.Span.Start);
                 }
             }
         }
