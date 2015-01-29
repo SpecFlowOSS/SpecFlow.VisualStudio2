@@ -28,37 +28,38 @@ namespace SpecFlow.VisualStudio.Editor.Outlining
 
             SnapshotPoint? lastNonIgnoredLineEnd = null;
 
-            Stack<SnapshotPoint> outlineStarts = new Stack<SnapshotPoint>();
+            var outlineStartTags = new Stack<GherkinTokenTag>();
 
             foreach (var gherkinTagSpan in tags)
             {
                 if (!gherkinTagSpan.Value.IsAnyTokenType(TokenType.Empty, TokenType.Comment))
                     lastNonIgnoredLineEnd = gherkinTagSpan.Value.Span.Start.GetContainingLine().End;
 
-                var levelToClose = OutlineGroups.FindIndex(0, outlineStarts.Count,
+                var levelToClose = OutlineGroups.FindIndex(0, outlineStartTags.Count,
                     outlineGroup => gherkinTagSpan.Value.FinishesAnyRule(outlineGroup));
                 if (levelToClose >= 0)
                 {
                     Debug.Assert(lastNonIgnoredLineEnd != null);
 
-                    while (outlineStarts.Count > levelToClose)
+                    while (outlineStartTags.Count > levelToClose)
                     {
-                        var startPoint = outlineStarts.Pop();
-                        yield return CreateOutliningRegionTag(startPoint, lastNonIgnoredLineEnd.Value);
+                        var startTag = outlineStartTags.Pop();
+                        yield return CreateOutliningRegionTag(startTag.Span.Start, lastNonIgnoredLineEnd.Value, startTag);
                     }
                 }
 
-                foreach (var outlineGroup in OutlineGroups.Skip(outlineStarts.Count))
+                foreach (var outlineGroup in OutlineGroups.Skip(outlineStartTags.Count))
                 {
                     if (gherkinTagSpan.Value.StartsAnyRule(outlineGroup))
-                        outlineStarts.Push(gherkinTagSpan.Value.Span.Start);
+                        outlineStartTags.Push(gherkinTagSpan.Value);
                 }
             }
         }
 
-        private static TagSpan<IOutliningRegionTag> CreateOutliningRegionTag(SnapshotPoint startPoint, SnapshotPoint endPoint)
+        private static TagSpan<IOutliningRegionTag> CreateOutliningRegionTag(SnapshotPoint startPoint, SnapshotPoint endPoint, GherkinTokenTag tag)
         {
-            return new TagSpan<IOutliningRegionTag>(new SnapshotSpan(startPoint, endPoint), new OutliningRegionTag());
+            var collapsedText = tag.Token.GetTokenValue();
+            return new TagSpan<IOutliningRegionTag>(new SnapshotSpan(startPoint, endPoint), new OutliningRegionTag(false, false, collapsedText, "TODO"));
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
