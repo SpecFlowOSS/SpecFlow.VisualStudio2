@@ -60,7 +60,7 @@ namespace SpecFlow.VisualStudio.Editor.Parser
             var tokenTagBuilder = new GherkinTokenTagBuilder(snapshot);
             try
             {
-                parser.Parse(new TokenScanner(reader), new TokenMatcher(), tokenTagBuilder);
+                parser.Parse(new TokenScanner(reader), new TokenMatcher(VsGherkinDialectProvider.Instance), tokenTagBuilder);
             }
             catch (CompositeParserException compositeParserException)
             {

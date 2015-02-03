@@ -99,13 +99,14 @@
     <Compile Include="Parser\GherkinTokenTagConsumer.cs" />
     <Compile Include="Parser\GherkinTokenTagger.cs" />
     <Compile Include="Parser\GherkinTokenTagProvider.cs" />
+    <Compile Include="Parser\VsGherkinDialectProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\gherkin3\i18n.json">
+    <EmbeddedResource Include="..\..\gherkin3\i18n.json">
       <Link>i18n.json</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </EmbeddedResource>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>

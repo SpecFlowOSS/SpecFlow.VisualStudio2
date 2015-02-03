@@ -38,7 +38,7 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
         {
             _buffer = buffer;
             this.gherkinTagAggregator = gherkinTagAggregator;
-            this.defaultGherkinDialect = new GherkinDialectProvider().DefaultDialect; //TODO: get default dialect from config
+            this.defaultGherkinDialect = VsGherkinDialectProvider.Instance.DefaultDialect; //TODO: get default dialect from config
         }
 
         public void AugmentCompletionSession(ICompletionSession session, IList<CompletionSet> completionSets)
