@@ -10,6 +10,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{EA9A
 		Samples\FullMonty.feature = Samples\FullMonty.feature
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecFlow.VisualStudio.NuGetPackages", "SpecFlow.VisualStudio.NuGetPackages\SpecFlow.VisualStudio.NuGetPackages.csproj", "{EC40ACB0-A6B9-4776-9078-B1D72D244787}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{7D6EBFC5-1F44-4C2A-A2DA-B7DE6D3ACBF8}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +27,10 @@ Global
 		{6ADE30F4-A56F-4E35-9EEC-C54B029E13DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6ADE30F4-A56F-4E35-9EEC-C54B029E13DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6ADE30F4-A56F-4E35-9EEC-C54B029E13DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC40ACB0-A6B9-4776-9078-B1D72D244787}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC40ACB0-A6B9-4776-9078-B1D72D244787}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC40ACB0-A6B9-4776-9078-B1D72D244787}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC40ACB0-A6B9-4776-9078-B1D72D244787}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

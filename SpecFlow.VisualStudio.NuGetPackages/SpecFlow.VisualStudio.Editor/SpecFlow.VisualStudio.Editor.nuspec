@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <id>SpecFlow.VisualStudio.Editor</id>
+    <version>2014.1.0-alpha1</version>
+    <title>SpecFlow.VisualStudio.Editor</title>
+    <authors>TechTalk</authors>
+    <owners>TechTalk</owners>
+    <summary>TODO</summary>
+    <description>TODO</description>
+    <releaseNotes>TODO</releaseNotes>
+    <language>en-US</language>
+    <!--<projectUrl>TODO</projectUrl>-->
+    <!--<iconUrl>TODO</iconUrl>-->
+    <!--<licenseUrl>TODO</licenseUrl>-->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <copyright>Copyright © 2015 TechTalk</copyright>
+    <tags>TODO</tags>
+    <dependencies>
+      <dependency id="Gherkin" />
+    </dependencies>
+  </metadata>
+</package>
