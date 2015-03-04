@@ -98,7 +98,7 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
                     {
                         case VSConstants.VSStd2KCmdID.TYPECHAR:
                             char ch = GetTypeChar(pvaIn);
-                            if (_currentSession == null && ShouldStartSession(ch))
+                            if (_currentSession == null && ShouldStartSessionOnTyping(ch))
                                 TriggerCompletion();
                             else if (_currentSession != null)
                                 Filter();
@@ -113,16 +113,21 @@ namespace SpecFlow.VisualStudio.Editor.Intellisense
             return hresult;
         }
 
-        private bool ShouldStartSession(char ch)
+        private bool ShouldStartSessionOnTyping(char ch)
         {
             if (char.IsWhiteSpace(ch))
+                return false;
+
+            if (ch == '|' || ch == '#' || ch == '*') //TODO: get this from parser?
                 return false;
 
             var caretBufferPosition = TextView.Caret.Position.BufferPosition;
 
             var line = caretBufferPosition.GetContainingLine();
-            var linePrefixText = new SnapshotSpan(line.Start, caretBufferPosition.Subtract(1)).GetText();
+            if (caretBufferPosition == line.Start)
+                return false; // we are at the beginning of a line (after an enter?)
 
+            var linePrefixText = new SnapshotSpan(line.Start, caretBufferPosition.Subtract(1)).GetText();
             return linePrefixText.All(char.IsWhiteSpace); // start auto completion for the first typed in character in the line 
         }
 
