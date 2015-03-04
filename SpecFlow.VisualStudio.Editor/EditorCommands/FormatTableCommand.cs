@@ -40,9 +40,11 @@ namespace SpecFlow.VisualStudio.Editor.EditorCommands
             if (currentText.Equals(formattedTableText))
                 return false;
 
-            var textEdit = textView.TextBuffer.CreateEdit();
-            textEdit.Replace(tableSpan.Value, formattedTableText);
-            textEdit.Apply();
+            using (var textEdit = textView.TextBuffer.CreateEdit())
+            {
+                textEdit.Replace(tableSpan.Value, formattedTableText);
+                textEdit.Apply();
+            }
 
             var restoredCaretPosition = GetCaretPositionFromCellPosition(textView.TextBuffer.CurrentSnapshot.GetLineFromLineNumber(line.LineNumber), caretCellPosition);
             textView.Caret.MoveTo(restoredCaretPosition);
