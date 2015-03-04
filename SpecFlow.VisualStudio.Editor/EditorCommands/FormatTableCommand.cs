@@ -36,6 +36,10 @@ namespace SpecFlow.VisualStudio.Editor.EditorCommands
             var tableTokenTags = gherkinTagAggregator.GetTags(tableSpan.Value).Where(t => t.Tag.IsToken).Select(t => t.Tag).ToArray();
             var formattedTableText = GetFormattedTableText(tableTokenTags);
 
+            var currentText = tableSpan.Value.GetText();
+            if (currentText.Equals(formattedTableText))
+                return false;
+
             var textEdit = textView.TextBuffer.CreateEdit();
             textEdit.Replace(tableSpan.Value, formattedTableText);
             textEdit.Apply();
