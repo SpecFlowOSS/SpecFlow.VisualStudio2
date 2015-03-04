@@ -120,35 +120,52 @@ namespace SpecFlow.VisualStudio.Editor.EditorCommands
             return result;
         }
 
+        private const int SCAN_LINE_RADIUS = 10;
+
         private SnapshotSpan? GetTableSpan(ITextSnapshotLine line, ITagAggregator<GherkinTokenTag> gherkinTagAggregator)
         {
             if (!gherkinTagAggregator.GetTags(line.Extent).Any(t => t.Tag.IsToken && t.Tag.IsAnyTokenType(TokenType.TableRow)))
                 return null;
             
             var snapshot = line.Snapshot;
-            int scanLineFrom = Math.Max(0, line.LineNumber - 10);
-            int scanLineTo = Math.Min(snapshot.LineCount - 1, line.LineNumber + 10);
+            int scanLineFrom = Math.Max(0, line.LineNumber - SCAN_LINE_RADIUS);
+            int scanLineTo = Math.Min(snapshot.LineCount - 1, line.LineNumber + SCAN_LINE_RADIUS);
 
+            return GetTableSpan(line, gherkinTagAggregator, snapshot, scanLineFrom, scanLineTo);
+        }
+
+        private SnapshotSpan? GetTableSpan(ITextSnapshotLine line, ITagAggregator<GherkinTokenTag> gherkinTagAggregator, ITextSnapshot snapshot, int scanLineFrom, int scanLineTo)
+        {
             var scanSpan = new SnapshotSpan(snapshot.GetLineFromLineNumber(scanLineFrom).Start, snapshot.GetLineFromLineNumber(scanLineTo).End);
             var gherkinMappingTagSpans = gherkinTagAggregator.GetTags(scanSpan).Where(t => t.Tag.IsToken).ToArray();
 
             var tagSpansBefore = gherkinMappingTagSpans.Where(t => t.Tag.Token.Location.Line - 1 < line.LineNumber).Reverse();
-            var tableStartTagSpan = tagSpansBefore.TakeWhile(t => t.Tag.IsAnyTokenType(TokenType.TableRow, TokenType.Empty, TokenType.Comment)).LastOrDefault();
+            var tableStartTagSpan =
+                tagSpansBefore.TakeWhile(t => t.Tag.IsAnyTokenType(TokenType.TableRow, TokenType.Empty, TokenType.Comment))
+                    .LastOrDefault();
             var tagSpansAfter = gherkinMappingTagSpans.Where(t => t.Tag.Token.Location.Line - 1 > line.LineNumber);
-            var tableEndTagSpan = tagSpansAfter.TakeWhile(t => t.Tag.IsAnyTokenType(TokenType.TableRow, TokenType.Empty, TokenType.Comment)).LastOrDefault();
+            var tableEndTagSpan =
+                tagSpansAfter.TakeWhile(t => t.Tag.IsAnyTokenType(TokenType.TableRow, TokenType.Empty, TokenType.Comment))
+                    .LastOrDefault();
 
             var startLine = line;
             var endLine = line;
             if (tableStartTagSpan != null)
-                startLine = snapshot.GetLineFromLineNumber(tableStartTagSpan.Tag.Token.Location.Line - 1);
+            {
+                var startLineNumber = tableStartTagSpan.Tag.Token.Location.Line - 1;
+                if (startLineNumber > 0 && startLineNumber <= scanLineFrom)
+                    return GetTableSpan(line, gherkinTagAggregator, snapshot, Math.Max(0, scanLineFrom - SCAN_LINE_RADIUS), scanLineTo);
+                startLine = snapshot.GetLineFromLineNumber(startLineNumber);
+            }
             if (tableEndTagSpan != null)
-                endLine = snapshot.GetLineFromLineNumber(tableEndTagSpan.Tag.Token.Location.Line - 1);
-
-            Debug.WriteLine("S: {0}, E: {1}", startLine, endLine);
+            {
+                var endLineNumber = tableEndTagSpan.Tag.Token.Location.Line - 1;
+                if (endLineNumber < snapshot.LineCount - 1 && endLineNumber >= scanLineTo)
+                    return GetTableSpan(line, gherkinTagAggregator, snapshot, scanLineFrom, Math.Min(snapshot.LineCount - 1, scanLineTo + SCAN_LINE_RADIUS));
+                endLine = snapshot.GetLineFromLineNumber(endLineNumber);
+            }
 
             return new SnapshotSpan(startLine.Start, endLine.EndIncludingLineBreak);
         }
-
-
     }
 }
