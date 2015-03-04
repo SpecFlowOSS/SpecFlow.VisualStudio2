@@ -1,4 +1,4 @@
-namespace SpecFlow.VisualStudio.Editor.EditorCommands
+namespace SpecFlow.VisualStudio.Editor.EditorCommands.Infrastructure
 {
     public enum GherkinEditorCommandStatus
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace SpecFlow.VisualStudio.Editor.EditorCommands
+namespace SpecFlow.VisualStudio.Editor.EditorCommands.Infrastructure
 {
     public abstract class GherkinEditorCommandBase : IGherkinEditorCommand
     {

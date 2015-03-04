@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Gherkin;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
+using SpecFlow.VisualStudio.Editor.EditorCommands.Infrastructure;
 using SpecFlow.VisualStudio.Editor.Parser;
 
 namespace SpecFlow.VisualStudio.Editor.EditorCommands

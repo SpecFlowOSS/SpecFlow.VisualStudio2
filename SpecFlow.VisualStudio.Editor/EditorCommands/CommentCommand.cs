@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Text.Editor;
+using SpecFlow.VisualStudio.Editor.EditorCommands.Infrastructure;
 
 namespace SpecFlow.VisualStudio.Editor.EditorCommands
 {

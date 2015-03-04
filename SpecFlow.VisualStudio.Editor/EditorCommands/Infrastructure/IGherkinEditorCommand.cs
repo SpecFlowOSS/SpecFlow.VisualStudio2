@@ -1,7 +1,7 @@
 using System;
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace SpecFlow.VisualStudio.Editor.EditorCommands
+namespace SpecFlow.VisualStudio.Editor.EditorCommands.Infrastructure
 {
     public interface IGherkinEditorCommand
     {

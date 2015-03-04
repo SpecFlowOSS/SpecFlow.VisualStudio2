@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace SpecFlow.VisualStudio.Editor.EditorCommands
+namespace SpecFlow.VisualStudio.Editor.EditorCommands.Infrastructure
 {
     public abstract class GherkinEditorTypeCharCommandBase : GherkinEditorCommandBase
     {

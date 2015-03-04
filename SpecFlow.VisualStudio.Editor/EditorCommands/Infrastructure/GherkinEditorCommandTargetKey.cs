@@ -1,7 +1,7 @@
 using System;
 using Microsoft.VisualStudio;
 
-namespace SpecFlow.VisualStudio.Editor.EditorCommands
+namespace SpecFlow.VisualStudio.Editor.EditorCommands.Infrastructure
 {
     public struct GherkinEditorCommandTargetKey
     {
