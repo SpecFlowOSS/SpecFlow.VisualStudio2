@@ -86,6 +86,12 @@
     <Compile Include="Classification\GherkinFileClassifierFormats.cs" />
     <Compile Include="Classification\GherkinFileClassifierProvider.cs" />
     <Compile Include="Classification\GherkinFileEditorClassifications.cs" />
+    <Compile Include="EditorCommands\GherkinEditorCommandBase.cs" />
+    <Compile Include="EditorCommands\GherkinEditorCommandBroker.cs" />
+    <Compile Include="EditorCommands\GherkinEditorCommandStatus.cs" />
+    <Compile Include="EditorCommands\GherkinEditorCommandTargetKey.cs" />
+    <Compile Include="EditorCommands\GherkinEditorTypeCharCommandBase.cs" />
+    <Compile Include="EditorCommands\IGherkinEditorCommand.cs" />
     <Compile Include="Errors\ErrorTagger.cs" />
     <Compile Include="Errors\ErrorTaggerProvider.cs" />
     <Compile Include="Intellisense\CompletionController.cs" />
