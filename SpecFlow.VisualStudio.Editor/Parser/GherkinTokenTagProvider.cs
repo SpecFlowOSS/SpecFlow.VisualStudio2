@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
@@ -10,10 +12,14 @@ namespace SpecFlow.VisualStudio.Editor.Parser
     [TagType(typeof(GherkinTokenTag))]
     internal sealed class GherkinTokenTagProvider : ITaggerProvider
     {
-
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
-            return new GherkinTokenTagger(buffer) as ITagger<T>;
+            return GetOrCreate(buffer, () => new GherkinTokenTagger(buffer) as ITagger<T>);
+        }
+
+        public TService GetOrCreate<TService>(ITextBuffer textBuffer, Func<TService> factory) where TService : class
+        {
+            return textBuffer.Properties.GetOrCreateSingletonProperty(typeof(TService), factory);
         }
     }
 }
