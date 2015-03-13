@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace SpecFlow.VisualStudio.Editor.Parser
 {
-    internal abstract class GherkinTokenTagConsumer : IDisposable
+    public abstract class GherkinTokenTagConsumer : IDisposable
     {
         protected readonly ITextBuffer buffer;
         protected readonly ITagAggregator<GherkinTokenTag> gherkinTagAggregator;
