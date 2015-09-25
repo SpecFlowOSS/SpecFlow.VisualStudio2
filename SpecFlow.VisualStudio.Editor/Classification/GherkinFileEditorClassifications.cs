@@ -5,6 +5,9 @@ namespace SpecFlow.VisualStudio.Editor.Classification
     public class GherkinFileEditorClassifications
     {
         public readonly IClassificationType Keyword;
+        public readonly IClassificationType KeywordGiven;
+        public readonly IClassificationType KeywordWhen;
+        public readonly IClassificationType KeywordThen;
         public readonly IClassificationType Comment;
         public readonly IClassificationType Tag;
         public readonly IClassificationType MultilineText;
@@ -21,6 +24,9 @@ namespace SpecFlow.VisualStudio.Editor.Classification
         public GherkinFileEditorClassifications(IClassificationTypeRegistryService registry)
         {
             Keyword = registry.GetClassificationType("gherkin.keyword");
+            KeywordGiven = registry.GetClassificationType("gherkin.keywordgiven");
+            KeywordWhen = registry.GetClassificationType("gherkin.keywordwhen");
+            KeywordThen = registry.GetClassificationType("gherkin.keywordthen");
             Comment = registry.GetClassificationType("gherkin.comment");
             Tag = registry.GetClassificationType("gherkin.tag");
             MultilineText = registry.GetClassificationType("gherkin.multilinetext");

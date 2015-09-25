@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Gherkin;
 using Microsoft.VisualStudio.Text;
@@ -45,7 +46,8 @@ namespace SpecFlow.VisualStudio.Editor.Classification
                     //classifications.Add(new ClassificationSpan(new SnapshotSpan(tagSpan.Start.Add(tag.Token.MatchedKeyword.Length + 1), tagSpan.End), gherkinFileEditorClassifications.UnboundStepText));
                     break;
                 case TokenType.StepLine:
-                    classifications.Add(new ClassificationSpan(new SnapshotSpan(tagSpan.Start, tag.Token.MatchedKeyword.Length), gherkinFileEditorClassifications.Keyword));
+                    var classification = GetClassification(tag.StepType);
+                    classifications.Add(new ClassificationSpan(new SnapshotSpan(tagSpan.Start, tag.Token.MatchedKeyword.Length), classification));
                     //classifications.Add(new ClassificationSpan(new SnapshotSpan(tagSpan.Start.Add(tag.Token.MatchedKeyword.Length), tagSpan.End), gherkinFileEditorClassifications.StepText));
                     break;
                 case TokenType.Comment:
@@ -70,6 +72,21 @@ namespace SpecFlow.VisualStudio.Editor.Classification
                     break;
                 case TokenType.Empty:
                     break;
+            }
+        }
+
+        private IClassificationType GetClassification(StepType stepType)
+        {
+            switch (stepType)
+            {
+                 case StepType.Given:
+                    return gherkinFileEditorClassifications.KeywordGiven;
+                 case StepType.When:
+                    return gherkinFileEditorClassifications.KeywordWhen;
+                 case StepType.Then:
+                    return gherkinFileEditorClassifications.KeywordThen;
+                default:
+                    throw new InvalidEnumArgumentException("stepType", (int)stepType, typeof (StepType));
             }
         }
 

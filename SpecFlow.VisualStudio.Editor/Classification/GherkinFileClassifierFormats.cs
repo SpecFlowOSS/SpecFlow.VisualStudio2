@@ -21,6 +21,48 @@ namespace SpecFlow.VisualStudio.Editor.Classification
 
     // exports a classification format for the classification type gherkin.tag
     [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = "gherkin.keywordgiven")]
+    [Name("gherkin.keywordgiven")]
+    [UserVisible(true)] //this should be visible to the end user
+    [Order(Before = Priority.Default)] //set the priority to be after the default classifiers
+    internal sealed class GherkinKeywordGivenClassificationFormat : ClassificationFormatDefinition
+    {
+        public GherkinKeywordGivenClassificationFormat()
+        {
+            this.DisplayName = "Gherkin Given Keyword"; 
+        }
+    }
+
+    // exports a classification format for the classification type gherkin.tag
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = "gherkin.keywordwhen")]
+    [Name("gherkin.keywordwhen")]
+    [UserVisible(true)] //this should be visible to the end user
+    [Order(Before = Priority.Default)] //set the priority to be after the default classifiers
+    internal sealed class GherkinKeywordWhenClassificationFormat : ClassificationFormatDefinition
+    {
+        public GherkinKeywordWhenClassificationFormat()
+        {
+            this.DisplayName = "Gherkin When Keyword"; 
+        }
+    }
+
+    // exports a classification format for the classification type gherkin.tag
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = "gherkin.keywordthen")]
+    [Name("gherkin.keywordthen")]
+    [UserVisible(true)] //this should be visible to the end user
+    [Order(Before = Priority.Default)] //set the priority to be after the default classifiers
+    internal sealed class GherkinKeywordThenClassificationFormat : ClassificationFormatDefinition
+    {
+        public GherkinKeywordThenClassificationFormat()
+        {
+            this.DisplayName = "Gherkin Then Keyword"; 
+        }
+    }
+
+    // exports a classification format for the classification type gherkin.tag
+    [Export(typeof(EditorFormatDefinition))]
     [ClassificationType(ClassificationTypeNames = "gherkin.comment")]
     [Name("gherkin.comment")]
     [UserVisible(true)] //this should be visible to the end user
