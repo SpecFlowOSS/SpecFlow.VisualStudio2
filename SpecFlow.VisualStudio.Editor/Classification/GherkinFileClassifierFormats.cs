@@ -15,7 +15,7 @@ namespace SpecFlow.VisualStudio.Editor.Classification
     {
         public GherkinKeywordClassificationFormat()
         {
-            this.DisplayName = "Gherkin Keyword"; 
+            this.DisplayName = "Gherkin Keyword (Non-Step)"; 
         }
     }
 
@@ -29,7 +29,7 @@ namespace SpecFlow.VisualStudio.Editor.Classification
     {
         public GherkinKeywordGivenClassificationFormat()
         {
-            this.DisplayName = "Gherkin Given Keyword"; 
+            this.DisplayName = "Gherkin Keyword (Given/And/But)"; 
         }
     }
 
@@ -43,7 +43,7 @@ namespace SpecFlow.VisualStudio.Editor.Classification
     {
         public GherkinKeywordWhenClassificationFormat()
         {
-            this.DisplayName = "Gherkin When Keyword"; 
+            this.DisplayName = "Gherkin Keyword (When/And/But)"; 
         }
     }
 
@@ -57,7 +57,7 @@ namespace SpecFlow.VisualStudio.Editor.Classification
     {
         public GherkinKeywordThenClassificationFormat()
         {
-            this.DisplayName = "Gherkin Then Keyword"; 
+            this.DisplayName = "Gherkin Keyword (Then/And/But)"; 
         }
     }
 
