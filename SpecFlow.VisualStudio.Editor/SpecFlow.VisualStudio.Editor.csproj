@@ -87,6 +87,7 @@
     <Compile Include="Classification\GherkinFileClassifierProvider.cs" />
     <Compile Include="Classification\GherkinFileEditorClassifications.cs" />
     <Compile Include="EditorCommands\CommentCommand.cs" />
+    <Compile Include="EditorCommands\FormatDocumentCommand.cs" />
     <Compile Include="EditorCommands\FormatTableCommand.cs" />
     <Compile Include="EditorCommands\Infrastructure\GherkinEditorCommandBase.cs" />
     <Compile Include="EditorCommands\Infrastructure\GherkinEditorCommandBroker.cs" />
