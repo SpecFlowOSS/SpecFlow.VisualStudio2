@@ -85,6 +85,8 @@ namespace SpecFlow.VisualStudio.Editor.Classification
                     return gherkinFileEditorClassifications.KeywordWhen;
                  case StepType.Then:
                     return gherkinFileEditorClassifications.KeywordThen;
+                 case StepType.NotAStep:
+                    return gherkinFileEditorClassifications.Keyword;
                 default:
                     throw new InvalidEnumArgumentException("stepType", (int)stepType, typeof (StepType));
             }
