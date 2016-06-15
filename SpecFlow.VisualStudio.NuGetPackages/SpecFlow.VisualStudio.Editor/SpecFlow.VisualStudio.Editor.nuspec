@@ -17,7 +17,7 @@
     <copyright>Copyright © 2015 TechTalk</copyright>
     <tags>TODO</tags>
     <dependencies>
-      <dependency id="Gherkin" />
+      <dependency id="Gherkin" version="[4.0.0]" />
     </dependencies>
   </metadata>
 </package>
