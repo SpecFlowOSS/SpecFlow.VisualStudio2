@@ -12,4 +12,19 @@
   
   <Target Name="AfterBuild" AfterTargets="Build" />
 
+  <Target Name="GetGitVersion" BeforeTargets="NugetBuild">
+    <CallTarget Targets="GetVersion" />
+    <CallTarget Targets="UpdatePackageVersion" Condition="'$(Configuration)' == 'Release'"/>
+  </Target>
+  <Target Name="UpdatePackageVersion">
+    <PropertyGroup>
+      <SpecRunPackageVersion Condition="'$(SpecRunPackageVersion)' == ''">$(GitVersion_NuGetVersion)</SpecRunPackageVersion>
+      <NugetVersion>$(SpecRunPackageVersion)</NugetVersion>
+    </PropertyGroup>
+    <Message Importance="High" Text="GitVersion: $(GitVersion_NuGetVersion)" />
+    <Message Importance="High" Text="NugetVersion: $(NugetVersion)" />
+    <!-- <XmlPoke Condition="'$(SpecRunPackageVersion)' != ''" XmlInputPath="SpecRun.SpecFlow.2\SpecRun.SpecFlow.2.nuspec" Namespaces="&lt;Namespace Prefix='ng' Uri='http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd' /&gt;" Query="//ng:dependency[@id='SpecRun.Runner']/@version" Value="[$(SpecRunPackageVersion),)" /> -->
+    
+  </Target>
+  
 </Project>
