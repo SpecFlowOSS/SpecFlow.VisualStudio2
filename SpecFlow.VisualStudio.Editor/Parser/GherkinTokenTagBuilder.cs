@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Gherkin;
+using Gherkin.Ast;
 using Microsoft.VisualStudio.Text;
 
 namespace SpecFlow.VisualStudio.Editor.Parser
 {
-    internal class GherkinTokenTagBuilder : IAstBuilder
+    internal class GherkinTokenTagBuilder : IAstBuilder<GherkinDocument>
     {
         private readonly ITextSnapshot snapshot;
         private List<GherkinTokenTag> tokenTags = new List<GherkinTokenTag>();
@@ -40,6 +41,16 @@ namespace SpecFlow.VisualStudio.Editor.Parser
                 return;
 
             lastToenTag.RuleTypesFinished.Add(ruleType);
+        }
+
+        GherkinDocument IAstBuilder<GherkinDocument>.GetResult()
+        {
+            return null;
+        }
+
+        public void Reset()
+        {
+            
         }
 
         public object GetResult()

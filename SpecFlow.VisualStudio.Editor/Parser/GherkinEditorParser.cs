@@ -15,7 +15,9 @@ namespace SpecFlow.VisualStudio.Editor.Parser
         {
             var newState = base.MatchToken(state, token, context);
             if (token.MatchedType != TokenType.None)
-                ((GherkinTokenTagBuilder)context.Builder).SetNewState(token, newState);
+            {
+                //((GherkinTokenTagBuilder) context.Builder).SetNewState(token, newState);
+            }
             return newState;
         }
 
@@ -90,6 +92,11 @@ namespace SpecFlow.VisualStudio.Editor.Parser
             {
                 return false;
             }
+
+            public void Reset()
+            {
+                
+            }
         }
         class NullTokenScanner : ITokenScanner
         {
@@ -98,7 +105,7 @@ namespace SpecFlow.VisualStudio.Editor.Parser
                 return new Token(null, new Location());
             }
         }
-        class NullAstBuilder : IAstBuilder
+        class NullAstBuilder : IAstBuilder<object>
         {
             public void Build(Token token)
             {
@@ -116,6 +123,11 @@ namespace SpecFlow.VisualStudio.Editor.Parser
             {
                 return null;
             }
+
+            public void Reset()
+            {
+                
+            }
         }
 
         public static TokenType[] GetExpectedTokens(int state)
@@ -129,7 +141,7 @@ namespace SpecFlow.VisualStudio.Editor.Parser
             {
                 parser.MatchToken(state, new Token(null, new Location()), new ParserContext()
                 {
-                    Builder = new NullAstBuilder(),
+                    //Builder = new NullAstBuilder(),
                     Errors = new List<ParserException>(),
                     TokenMatcher = new AllFalseTokenMatcher(),
                     TokenQueue = new Queue<Token>(),
