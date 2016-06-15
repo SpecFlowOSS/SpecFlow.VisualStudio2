@@ -76,7 +76,7 @@ namespace SpecFlow.VisualStudio.Editor.Classification
         private static void AddItemClassifications(List<ClassificationSpan> classifications, GherkinTokenTag tag, SnapshotSpan tagSpan,
             IClassificationType classificationType)
         {
-            foreach (var gherkinLineSpan in tag.Token.MathcedItems)
+            foreach (var gherkinLineSpan in tag.Token.MatchedItems)
             {
                 classifications.Add(
                     new ClassificationSpan(

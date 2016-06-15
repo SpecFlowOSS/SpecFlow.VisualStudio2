@@ -82,10 +82,10 @@ namespace SpecFlow.VisualStudio.Editor.EditorCommands
                 if (tag.IsAnyTokenType(TokenType.TableRow))
                 {
                     stringBuilder.Append(indentText);
-                    for (int i = 0; i < tag.Token.MathcedItems.Length; i++)
+                    for (int i = 0; i < tag.Token.MatchedItems.Length; i++)
                     {
                         stringBuilder.Append("| ");
-                        var cellText = tag.Token.MathcedItems[i].Text;
+                        var cellText = tag.Token.MatchedItems[i].Text;
                         stringBuilder.Append(cellText);
                         if (i < cellWidths.Length)
                         {
@@ -112,13 +112,13 @@ namespace SpecFlow.VisualStudio.Editor.EditorCommands
             {
                 if (result == null)
                 {
-                    result = new int[token.MathcedItems.Length];
+                    result = new int[token.MatchedItems.Length];
                     indentText = token.Line.GetLineText(0).Substring(0, token.MatchedIndent);
                 }
 
-                for (int i = 0; i < Math.Min(result.Length, token.MathcedItems.Length); i++)
+                for (int i = 0; i < Math.Min(result.Length, token.MatchedItems.Length); i++)
                 {
-                    result[i] = Math.Max(result[i], token.MathcedItems[i].Text.Length);
+                    result[i] = Math.Max(result[i], token.MatchedItems[i].Text.Length);
                 }
             }
 
