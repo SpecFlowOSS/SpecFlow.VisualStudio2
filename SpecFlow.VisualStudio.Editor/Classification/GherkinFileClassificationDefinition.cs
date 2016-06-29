@@ -24,6 +24,24 @@ namespace SpecFlow.VisualStudio.Editor.Classification
         [BaseDefinition("keyword")]
         internal static ClassificationTypeDefinition GherkinKeywordClassifierType = null;
 
+        // exports a classification type for the Gherkin keywords: gherkin.keywordgiven
+        [Export(typeof(ClassificationTypeDefinition))]
+        [Name("gherkin.keywordgiven")]
+        [BaseDefinition("keyword")]
+        internal static ClassificationTypeDefinition GherkinKeywordGivenClassifierType = null;
+
+        // exports a classification type for the Gherkin keywords: gherkin.keywordwhen
+        [Export(typeof(ClassificationTypeDefinition))]
+        [Name("gherkin.keywordwhen")]
+        [BaseDefinition("keyword")]
+        internal static ClassificationTypeDefinition GherkinKeywordWhenClassifierType = null;
+
+        // exports a classification type for the Gherkin keywords: gherkin.keywordthen
+        [Export(typeof(ClassificationTypeDefinition))]
+        [Name("gherkin.keywordthen")]
+        [BaseDefinition("keyword")]
+        internal static ClassificationTypeDefinition GherkinKeywordThenClassifierType = null;
+
         // exports a classification type for the Gherkin comments: gherkin.comment
         [Export(typeof(ClassificationTypeDefinition))]
         [Name("gherkin.comment")]

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Gherkin;
 using Gherkin.Ast;
 using Microsoft.VisualStudio.Text;
@@ -25,9 +22,37 @@ namespace SpecFlow.VisualStudio.Editor.Parser
             if (token.IsEOF)
                 return;
 
-            tokenTags.Add(new GherkinTokenTag(token, lastRuleTypes.ToArray(), snapshot));
+            var stepType = GetStepType(token);
+            tokenTags.Add(new GherkinTokenTag(token, lastRuleTypes.ToArray(), snapshot, stepType));
+
             lastRuleTypes.Clear();
         }
+
+        private StepType GetStepType(Token token)
+        {
+            if (token.MatchedType == TokenType.StepLine)
+            {
+                if (token.IsGiven())
+                {
+                    CurrentStepType = StepType.Given;
+                }
+                if (token.IsWhen())
+                {
+                    CurrentStepType = StepType.When;
+                }
+                if (token.IsThen())
+                {
+                    CurrentStepType = StepType.Then;
+                }
+            }
+            else
+            {
+                CurrentStepType = StepType.NotAStep;
+            }
+            return CurrentStepType;
+        }
+
+        private StepType CurrentStepType { get; set; }
 
         public void StartRule(RuleType ruleType)
         {

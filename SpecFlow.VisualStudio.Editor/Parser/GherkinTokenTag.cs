@@ -12,6 +12,7 @@ namespace SpecFlow.VisualStudio.Editor.Parser
     {
         public ParserException ParserException { get; private set; }
         public Token Token { get; private set; }
+        public StepType StepType { get; private set; }
         public RuleType[] RuleTypesStarted { get; private set; }
         public List<RuleType> RuleTypesFinished { get; private set; } 
         public SnapshotSpan Span { get; private set; }
@@ -19,9 +20,10 @@ namespace SpecFlow.VisualStudio.Editor.Parser
         public bool IsToken { get { return Token != null; } }
         public bool IsError { get { return ParserException != null; } }
 
-        public GherkinTokenTag(Token token, RuleType[] ruleTypesStarted, ITextSnapshot snapshot)
+        public GherkinTokenTag(Token token, RuleType[] ruleTypesStarted, ITextSnapshot snapshot, StepType stepType)
         {
             this.Token = token;
+            this.StepType = stepType;
             RuleTypesStarted = ruleTypesStarted;
             RuleTypesFinished = new List<RuleType>();
             Span = GetSpan(snapshot, token.Location);
