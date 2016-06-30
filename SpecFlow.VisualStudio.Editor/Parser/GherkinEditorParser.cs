@@ -11,11 +11,19 @@ namespace SpecFlow.VisualStudio.Editor.Parser
 {
     internal class GherkinEditorParser : Gherkin.Parser
     {
+        private readonly GherkinTokenTagBuilder _astBuilder;
+
+        public GherkinEditorParser(IAstBuilder<GherkinDocument> astBuilder) : base(astBuilder)
+        {
+            _astBuilder = astBuilder as GherkinTokenTagBuilder;
+        }
+
         protected override int MatchToken(int state, Token token, ParserContext context)
         {
             var newState = base.MatchToken(state, token, context);
             if (token.MatchedType != TokenType.None)
             {
+                _astBuilder?.SetNewState(token, newState);
                 //((GherkinTokenTagBuilder) context.Builder).SetNewState(token, newState);
             }
             return newState;
@@ -132,7 +140,7 @@ namespace SpecFlow.VisualStudio.Editor.Parser
 
         public static TokenType[] GetExpectedTokens(int state)
         {
-            var parser = new GherkinEditorParser()
+            var parser = new GherkinEditorParser(new GherkinTokenTagBuilder(null))
             {
                 StopAtFirstError = true
             };

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Gherkin;
 using Gherkin.Ast;
@@ -68,14 +69,10 @@ namespace SpecFlow.VisualStudio.Editor.Parser
             lastToenTag.RuleTypesFinished.Add(ruleType);
         }
 
-        GherkinDocument IAstBuilder<GherkinDocument>.GetResult()
-        {
-            return null;
-        }
-
         public void Reset()
         {
-            
+            tokenTags.Clear();
+            lastRuleTypes.Clear();
         }
 
         public object GetResult()
@@ -93,6 +90,11 @@ namespace SpecFlow.VisualStudio.Editor.Parser
                 return;
 
             lastTokenTag.NewState = newState;
+        }
+
+        GherkinDocument IAstBuilder<GherkinDocument>.GetResult()
+        {
+            return null;
         }
     }
 }

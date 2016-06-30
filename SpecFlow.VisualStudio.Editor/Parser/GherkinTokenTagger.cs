@@ -69,10 +69,10 @@ namespace SpecFlow.VisualStudio.Editor.Parser
             stopwatch.Start();
             var parserErrors = new List<ParserException>();
 
-            var parser = new GherkinEditorParser();
+            var tokenTagBuilder = new GherkinTokenTagBuilder(snapshot);
+           var parser = new GherkinEditorParser(tokenTagBuilder);
 
             var reader = new StringReader(fileContent);
-            var tokenTagBuilder = new GherkinTokenTagBuilder(snapshot);
             try
             {
                 parser.Parse(new TokenScanner(reader), new TokenMatcher(VsGherkinDialectProvider.Instance));
