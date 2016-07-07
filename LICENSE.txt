@@ -1,6 +1,6 @@
 SpecFlow Licence (New BSD License)
 
-Copyright (c) 2009, TechTalk
+Copyright (c) 2009-2016, TechTalk
 
 Disclaimer:
  * The initial codebase of Specflow was written by TechTalk employees. 
