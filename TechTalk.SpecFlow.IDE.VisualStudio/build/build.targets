@@ -6,7 +6,7 @@
            XmlInputPath="source.extension.vsixmanifest"
 		   Namespaces="&lt;Namespace Prefix='vsix'  Uri='http://schemas.microsoft.com/developer/vsx-schema/2011' /&gt;" 		   
            Query="//vsix:Identity/@Version"
-           Value="$(GitVersion_MajorMinorPatch)" />
+           Value="$(GitVersion_Major).$(GitVersion_Minor).$(GitVersion_BuildMetaDataPadded)" />
 	</Target>
 
     <Target Name="BeforeBuild">
