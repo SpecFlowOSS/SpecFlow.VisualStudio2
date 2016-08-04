@@ -37,11 +37,12 @@ build:
 artifacts:
 - path: TechTalk.SpecFlow.IDE.VisualStudio\bin\Release\TechTalk.SpecFlow.IDE.VisualStudio.vsix
 
-
-deploy:
-  provider: NuGet
-  server: https://www.myget.org/F/sabotageandi-vsix/api/v2/package
-  api_key:
+environment:
+  myget_api_key:
     secure: T2HtRS5HxW134lpmeKqezf3lmr9TvwmHry/w7SzSIROt+LOaW5gF7O1NHhPvyUqI
-  skip_symbols: false
-  artifact: TechTalk.SpecFlow.IDE.VisualStudio\bin\Release\TechTalk.SpecFlow.IDE.VisualStudio.vsix
+
+
+deploy_script:
+  - ps: $wc = new-object System.Net.WebClient
+  - ps: $wc.Headers["X-NuGet-ApiKey"] = "$env:myget_api_key"
+  - ps: $wc.UploadFile("https://www.myget.org/F/sabotageandi-vsix/vsix/upload", "TechTalk.SpecFlow.IDE.VisualStudio\bin\Release\TechTalk.SpecFlow.IDE.VisualStudio.vsix")
