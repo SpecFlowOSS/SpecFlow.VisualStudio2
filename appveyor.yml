@@ -1,0 +1,47 @@
+version: build{build}
+
+branches:
+  only:
+  - master
+
+environment:
+  SpecFlowBaseVersion: 0.1.0
+  SpecFlowPackageVersion: "0.1.0-ci$(APPVEYOR_BUILD_NUMBER)"
+  
+cache:
+  - packages -> **\packages.config
+
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: "$(SpecFlowBaseVersion)"
+  assembly_file_version: "$(SpecFlowBaseVersion)"
+  assembly_informational_version: "$(SpecFlowPackageVersion)"
+
+nuget:
+  project_feed: true
+  disable_publish_on_pr: true
+
+configuration: Release
+
+before_build:
+  - appveyor DownloadFile https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+  - appveyor DownloadFile https://raw.githubusercontent.com/appveyor/ci/master/scripts/nuget-restore.cmd
+  - nuget-restore
+
+build:
+  project: SpecFlow.VisualStudio2.sln
+  verbosity: normal
+
+
+artifacts:
+- path: TechTalk.SpecFlow.IDE.VisualStudio\bin\Release\TechTalk.SpecFlow.IDE.VisualStudio.vsix
+
+
+deploy:
+  provider: NuGet
+  server: https://www.myget.org/F/sabotageandi-vsix/api/v2/package
+  api_key:
+    secure: T2HtRS5HxW134lpmeKqezf3lmr9TvwmHry/w7SzSIROt+LOaW5gF7O1NHhPvyUqI
+  skip_symbols: false
+  artifact: TechTalk.SpecFlow.IDE.VisualStudio\bin\Release\TechTalk.SpecFlow.IDE.VisualStudio.vsix
