@@ -23,5 +23,6 @@ Sponsored by TechTalk (http://www.techtalk.at).</Description>
   </Dependencies>
   <Assets>
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="SpecFlow.VisualStudio.Editor" Path="|SpecFlow.VisualStudio.Editor|" />
+    <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="Project" d:ProjectName="%CurrentProject%.ItemTemplates" d:TargetPath="|TechTalk.SpecFlow.IDE.VisualStudio.ItemTemplates;TemplateProjectOutputGroup|" Path="ItemTemplates" d:VsixSubPath="ItemTemplates" />
   </Assets>
 </PackageManifest>
