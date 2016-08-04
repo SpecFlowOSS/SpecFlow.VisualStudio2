@@ -7,6 +7,9 @@ branches:
 environment:
   SpecFlowBaseVersion: 0.1.0
   SpecFlowPackageVersion: "0.1.0-ci$(APPVEYOR_BUILD_NUMBER)"
+  myget_api_key:
+    secure: T2HtRS5HxW134lpmeKqezf3lmr9TvwmHry/w7SzSIROt+LOaW5gF7O1NHhPvyUqI
+
   
 cache:
   - packages -> **\packages.config
@@ -37,9 +40,6 @@ build:
 artifacts:
 - path: TechTalk.SpecFlow.IDE.VisualStudio\bin\Release\TechTalk.SpecFlow.IDE.VisualStudio.vsix
 
-environment:
-  myget_api_key:
-    secure: T2HtRS5HxW134lpmeKqezf3lmr9TvwmHry/w7SzSIROt+LOaW5gF7O1NHhPvyUqI
 
 
 deploy_script:
