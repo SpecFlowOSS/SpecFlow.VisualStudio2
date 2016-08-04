@@ -43,6 +43,7 @@ artifacts:
 
 
 deploy_script:
+  - ps: $vsix = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER -ChildPath "TechTalk.SpecFlow.IDE.VisualStudio\bin\Release\TechTalk.SpecFlow.IDE.VisualStudio.vsix"
   - ps: $wc = new-object System.Net.WebClient
-  - ps: $wc.Headers["X-NuGet-ApiKey"] = "$env:myget_api_key"
-  - ps: $wc.UploadFile("https://www.myget.org/F/sabotageandi-vsix/vsix/upload", ".\TechTalk.SpecFlow.IDE.VisualStudio\bin\Release\TechTalk.SpecFlow.IDE.VisualStudio.vsix")
+  - ps: $wc.Headers["X-NuGet-ApiKey"] = $env:myget_api_key
+  - ps: $wc.UploadFile("https://www.myget.org/F/sabotageandi-vsix/vsix/upload", $vsix)
