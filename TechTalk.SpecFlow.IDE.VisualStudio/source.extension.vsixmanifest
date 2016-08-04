@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="TechTalk.SpecFlow.IDE.VisualStudio" Version="0.1.075" Language="en-US" Publisher="Andreas Willich" />
+    <Identity Id="TechTalk.SpecFlow.IDE.VisualStudio" Version="0.1.076" Language="en-US" Publisher="Andreas Willich" />
     <DisplayName>SpecFlow for Visual Studio</DisplayName>
     <Description xml:space="preserve">SpecFlow integration for Visual Studio. 
 Sponsored by TechTalk (http://www.techtalk.at).</Description>
