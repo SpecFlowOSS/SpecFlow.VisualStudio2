@@ -45,4 +45,4 @@ artifacts:
 deploy_script:
   - ps: $wc = new-object System.Net.WebClient
   - ps: $wc.Headers["X-NuGet-ApiKey"] = "$env:myget_api_key"
-  - ps: $wc.UploadFile("https://www.myget.org/F/sabotageandi-vsix/vsix/upload", "TechTalk.SpecFlow.IDE.VisualStudio\bin\Release\TechTalk.SpecFlow.IDE.VisualStudio.vsix")
+  - ps: $wc.UploadFile("https://www.myget.org/F/sabotageandi-vsix/vsix/upload", ".\TechTalk.SpecFlow.IDE.VisualStudio\bin\Release\TechTalk.SpecFlow.IDE.VisualStudio.vsix")
